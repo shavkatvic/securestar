@@ -1,0 +1,80 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #0d1117;
+  color: #f0f6fc;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 14px;
+}
+
+p {
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 12px;
+  background: #238636;
+  color: #fff;
+  font-size: 16px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #2d58c5;
+}
+
+button.small {
+  width: auto;
+  margin: 6px 4px;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.button-row button {
+  flex: 1 1 48%;
+}
+
+.product {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+}
+
+.product button {
+  flex: 0 0 45%;
+}
+
+.footer {
+  text-align: center;
+  color: #8b949e;
+  margin-top: 20px;
+  font-size: 14px;
+}

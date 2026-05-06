@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UzStar & Premium</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>UzStar & Premium</h1>
+    <p>Telegram ichida hamma savdolar mini-app orqali amalga oshiriladi. To'lov usulini tanlang va botga yuboring.</p>
+
+    <div class="card">
+      <h2>Mahsulotlar</h2>
+      <div class="button-row">
+        <button onclick="showSection('stars')">⭐️ Stars</button>
+        <button onclick="showSection('premium')">💎 Premium</button>
+      </div>
+      <div class="button-row">
+        <button onclick="showSection('gifts')">🎁 Sovg'alar</button>
+        <button onclick="showSection('wallet')">💳 Hamyon</button>
+      </div>
+    </div>
+
+    <div id="content"></div>
+    <div class="footer">Mini app foydalanuvchi uchun qurilgan. Barcha to'lovlar Telegram orqali tasdiqlanadi.</div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

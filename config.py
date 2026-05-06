@@ -4,10 +4,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Telegram Bot Token
-BOT_TOKEN = os.getenv('BOT_TO8535730854:AAGY4PfH9NSdRST6VX_Rx4rZTAMu2o_P_jUKEN')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 # Web App
-WEBAPP_URL = os.getenv('WEBAPP_URL', 'https://yourdomain.com/webapp')
+WEBAPP_URL = os.getenv('WEBAPP_URL', 'https://shavkatvic.github.io/securestar/')
 WEBAPP_START_PARAM = os.getenv('WEBAPP_START_PARAM', 'uzstar-miniapp')
 
 # Database
