@@ -4,12 +4,38 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, Labeled
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes, PreCheckoutQueryHandler, MessageHandler, filters
 from database import get_db, User, Transaction, Gift, FragmentInventory
 from payments import create_payment, wallet_payment, usd_to_uzs, providers
-from config import BOT_TOKEN, PRODUCT_PRICES, MESSAGES, REFERRAL_REWARD_PERCENT, PROVIDER_TOKENS, WEBAPP_URL
+from config import BOT_TOKEN, PRODUCT_PRICES, MESSAGES, PROVIDER_TOKENS, WEBAPP_URL
 import uuid
 import json
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+STAR_RATE_UZS = 200
+STAR_PACKAGES_UZS = {
+    'stars_100': 20000,
+    'stars_150': 30000,
+    'stars_250': 50000,
+    'stars_350': 70000,
+    'stars_500': 100000,
+    'stars_750': 150000,
+    'stars_1000': 200000,
+    'stars_1500': 300000,
+    'stars_2500': 500000,
+    'stars_5000': 1000000,
+    'stars_10000': 2000000,
+}
+
+def get_star_price(product_key, custom_count=None):
+    if product_key == 'stars_custom':
+        return max(custom_count or 0, 50) * STAR_RATE_UZS
+    return STAR_PACKAGES_UZS.get(product_key, 0)
+
+
+def format_star_name(product_key, custom_count=None):
+    if product_key == 'stars_custom':
+        return f"{custom_count} Stars"
+    return product_key.replace('_', ' ').title()
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -50,9 +76,18 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if data == 'stars':
         keyboard = [
-            [InlineKeyboardButton("50 ⭐️ - $1.99", callback_data='buy_stars_50')],
-            [InlineKeyboardButton("100 ⭐️ - $3.99", callback_data='buy_stars_100')],
-            [InlineKeyboardButton("500 ⭐️ - $19.99", callback_data='buy_stars_500')],
+            [InlineKeyboardButton("100 ⭐️ - 20,000 UZS", callback_data='buy_stars_100')],
+            [InlineKeyboardButton("150 ⭐️ - 30,000 UZS", callback_data='buy_stars_150')],
+            [InlineKeyboardButton("250 ⭐️ - 50,000 UZS", callback_data='buy_stars_250')],
+            [InlineKeyboardButton("350 ⭐️ - 70,000 UZS", callback_data='buy_stars_350')],
+            [InlineKeyboardButton("500 ⭐️ - 100,000 UZS", callback_data='buy_stars_500')],
+            [InlineKeyboardButton("750 ⭐️ - 150,000 UZS", callback_data='buy_stars_750')],
+            [InlineKeyboardButton("1000 ⭐️ - 200,000 UZS", callback_data='buy_stars_1000')],
+            [InlineKeyboardButton("1500 ⭐️ - 300,000 UZS", callback_data='buy_stars_1500')],
+            [InlineKeyboardButton("2500 ⭐️ - 500,000 UZS", callback_data='buy_stars_2500')],
+            [InlineKeyboardButton("5000 ⭐️ - 1,000,000 UZS", callback_data='buy_stars_5000')],
+            [InlineKeyboardButton("10000 ⭐️ - 2,000,000 UZS", callback_data='buy_stars_10000')],
+            [InlineKeyboardButton("⭐️ Maxsus buyurtma", callback_data='buy_stars_custom')],
             [InlineKeyboardButton("🔙 Orqaga", callback_data='back')],
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -60,8 +95,11 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data.startswith('buy_stars_'):
         count = data.split('_')[2]
-        price_usd = PRODUCT_PRICES[f'stars_{count}']
-        price_uzs = usd_to_uzs(price_usd)
+        if count == 'custom':
+            await query.edit_message_text("Iltimos, kamida 50 Stars miqdorini yozing.")
+            db.close()
+            return
+        price_uzs = STAR_PACKAGES_UZS.get(f'stars_{count}', 0)
         keyboard = [
             [InlineKeyboardButton("Payme", callback_data=f'pay_payme_stars_{count}')],
             [InlineKeyboardButton("Click", callback_data=f'pay_click_stars_{count}')],
@@ -82,6 +120,9 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if product == 'topup':
             price_uzs = int(count_or_period)
+            price_usd = 0
+        elif product == 'stars':
+            price_uzs = STAR_PACKAGES_UZS.get(product_key, 0)
             price_usd = 0
         else:
             price_usd = PRODUCT_PRICES.get(product_key, 0)
@@ -171,9 +212,11 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data == 'wallet':
         user = db.query(User).filter(User.telegram_id == user_id).first()
+        star_balance = getattr(user, 'star_balance', 0)
         keyboard = [
             [InlineKeyboardButton("To'ldirish", callback_data='topup')],
-            [InlineKeyboardButton("Balans: {:.0f} UZS".format(user.wallet_balance), callback_data='balance')],
+            [InlineKeyboardButton(f"Balans: {user.wallet_balance:.0f} UZS", callback_data='balance')],
+            [InlineKeyboardButton(f"⭐️ Star balansi: {star_balance}", callback_data='balance')],
             [InlineKeyboardButton("🔙 Orqaga", callback_data='back')],
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -216,7 +259,8 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         total_expenses = db.query(Transaction).filter(Transaction.user_id == user.id, Transaction.product_type != 'topup', Transaction.status == 'success').with_entities(Transaction.amount_uzs).all()
         deposits = sum(t[0] for t in total_deposits)
         expenses = sum(t[0] for t in total_expenses)
-        text = f"Jami depozitlar: {deposits:.0f} UZS\nJami xarajatlar: {expenses:.0f} UZS\nTaklif qilganlar: {user.referral_count}"
+        star_balance = getattr(user, 'star_balance', 0)
+        text = f"Star balansi: {star_balance} ⭐\nJami depozitlar: {deposits:.0f} UZS\nJami xarajatlar: {expenses:.0f} UZS\nTaklif qilganlar: {user.referral_count}"
         keyboard = [[InlineKeyboardButton("🔙 Orqaga", callback_data='back')]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await query.edit_message_text(text, reply_markup=reply_markup)
@@ -224,7 +268,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == 'referral':
         user = db.query(User).filter(User.telegram_id == user_id).first()
         link = f"https://t.me/{context.bot.username}?start={user.referral_code}"
-        text = f"Sizning taklif havolangiz:\n{link}\n\nHar bir muvaffaqiyatli taklif uchun {REFERRAL_REWARD_PERCENT}% mukofot!"
+        text = f"Sizning taklif havolangiz:\n{link}\n\nHar bir muvaffaqiyatli xariddan keyin referrerga 5 Stars bonus beriladi."
         keyboard = [[InlineKeyboardButton("🔙 Orqaga", callback_data='back')]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await query.edit_message_text(text, reply_markup=reply_markup)
@@ -245,7 +289,18 @@ async def process_purchase(user_id, product_key, product_name, price_usd, price_
         Transaction.status == 'pending'
     ).order_by(Transaction.created_at.desc()).first()
 
-    if transaction:
+    if transaction is None:
+        transaction = Transaction(
+            user_id=user.id,
+            product_type=product_key,
+            product_details=product_name,
+            amount_usd=0,
+            amount_uzs=price_uzs,
+            payment_method=payment_method,
+            status='success'
+        )
+        db.add(transaction)
+    else:
         transaction.status = 'success'
 
     if product_key.startswith('topup'):
@@ -283,8 +338,7 @@ async def process_purchase(user_id, product_key, product_name, price_usd, price_
     if user.referred_by:
         referrer = db.query(User).filter(User.telegram_id == user.referred_by).first()
         if referrer:
-            reward = price_uzs * REFERRAL_REWARD_PERCENT / 100
-            referrer.wallet_balance += reward
+            referrer.star_balance = getattr(referrer, 'star_balance', 0) + 5
             referrer.referral_count += 1
 
     db.commit()
@@ -304,11 +358,32 @@ async def web_app_data_handler(update: Update, context: ContextTypes.DEFAULT_TYP
     if action == 'purchase':
         product_key = payload.get('product')
         method = payload.get('method')
-        price_usd = PRODUCT_PRICES.get(product_key, 0)
-        price_uzs = usd_to_uzs(price_usd)
+        custom_count = int(payload.get('count', 0)) if payload.get('count') else None
 
-        if method in ['payme', 'click'] and method in PROVIDER_TOKENS and PROVIDER_TOKENS[method]:
-            product_title = f"Telegram {product_key.replace('_', ' ').title()}"
+        if product_key == 'stars_custom':
+            if not custom_count or custom_count < 50:
+                await update.message.reply_text("Kamida 50 Stars buyurtma qilishingiz kerak.")
+                db.close()
+                return
+            price_uzs = get_star_price(product_key, custom_count)
+            product_name = format_star_name(product_key, custom_count)
+        elif product_key.startswith('stars'):
+            price_uzs = get_star_price(product_key)
+            product_name = format_star_name(product_key)
+        else:
+            price_usd = PRODUCT_PRICES.get(product_key, 0)
+            price_uzs = usd_to_uzs(price_usd)
+            product_name = product_key.replace('_', ' ').title()
+
+        if method == 'wallet':
+            if wallet_payment(user_id, price_uzs, db):
+                await process_purchase(user_id, product_key, product_name, 0, price_uzs, 'wallet', db, context, update.message.chat_id)
+                emoji = "⭐️" if "stars" in product_key else "💎" if "premium" in product_key else "🎁"
+                await update.message.reply_text(MESSAGES['payment_success'].format(product=product_name, emoji=emoji))
+            else:
+                await update.message.reply_text(MESSAGES['insufficient_balance'])
+        elif method in ['payme', 'click'] and method in PROVIDER_TOKENS and PROVIDER_TOKENS[method]:
+            product_title = f"Telegram {product_name}"
             await context.bot.send_invoice(
                 chat_id=update.message.chat_id,
                 title=product_title,
@@ -319,17 +394,10 @@ async def web_app_data_handler(update: Update, context: ContextTypes.DEFAULT_TYP
                 prices=[LabeledPrice("Narxi", int(price_uzs * 100))],
                 start_parameter="bot-purchase-process"
             )
-        elif method == 'wallet':
-            if wallet_payment(user_id, price_uzs, db):
-                product_name = product_key.replace('_', ' ')
-                await process_purchase(user_id, product_key, product_name, price_usd, price_uzs, 'wallet', db, context, update.message.chat_id)
-                emoji = "⭐️" if "stars" in product_key else "💎" if "premium" in product_key else "🎁"
-                await update.message.reply_text(MESSAGES['payment_success'].format(product=product_name, emoji=emoji))
-            else:
-                await update.message.reply_text(MESSAGES['insufficient_balance'])
         else:
-            link, transaction_id = create_payment(user_id, product_key, product_key.replace('_', ' '), price_usd, method, db)
-            await update.message.reply_text(f"To'lovni amalga oshirish uchun havola: {link}")
+            await update.message.reply_text("Iltimos, Payme yoki Click uchun mini appdan foydalaning.")
+        db.close()
+        return
 
     elif action == 'topup':
         amount = int(payload.get('amount', 0))
@@ -375,7 +443,7 @@ async def web_app_data_handler(update: Update, context: ContextTypes.DEFAULT_TYP
             user = db.query(User).filter(User.telegram_id == user_id).first()
             if user:
                 link = f"https://t.me/{context.bot.username}?start={user.referral_code}"
-                await update.message.reply_text(f"Sizning taklif havolangiz:\n{link}\n\nHar bir muvaffaqiyatli taklif uchun {REFERRAL_REWARD_PERCENT}% mukofot!")
+                await update.message.reply_text(f"Sizning taklif havolangiz:\n{link}\n\nHar bir muvaffaqiyatli xariddan keyin referrerga 5 Stars bonus beriladi.")
             else:
                 await update.message.reply_text("Foydalanuvchi topilmadi.")
         else:

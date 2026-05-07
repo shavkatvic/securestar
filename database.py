@@ -14,6 +14,7 @@ class User(Base):
     first_name = Column(String)
     last_name = Column(String)
     wallet_balance = Column(Float, default=0.0)
+    star_balance = Column(Integer, default=0)
     referral_code = Column(String, unique=True)
     referred_by = Column(String)  # telegram_id of referrer
     referral_count = Column(Integer, default=0)
@@ -66,6 +67,14 @@ class FragmentInventory(Base):
 # Database setup
 engine = create_engine('sqlite:///telegrambot.db', echo=False)
 Base.metadata.create_all(engine)
+
+if engine.dialect.name == 'sqlite':
+    with engine.connect() as conn:
+        result = conn.execute("PRAGMA table_info(users)").fetchall()
+        existing_columns = [row[1] for row in result]
+        if 'star_balance' not in existing_columns:
+            conn.execute("ALTER TABLE users ADD COLUMN star_balance INTEGER DEFAULT 0")
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def get_db():
