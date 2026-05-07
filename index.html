@@ -2,117 +2,209 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UzStar Mini App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Tez Star Mini App</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
       color-scheme: dark;
-      background: var(--tg-theme-bg-color, #111827);
-      color: var(--tg-theme-text-color, #f8fafc);
-      --surface: rgba(255, 255, 255, 0.06);
-      --surface-strong: rgba(255, 255, 255, 0.12);
-      --border: rgba(255, 255, 255, 0.14);
+      --bg: var(--tg-theme-bg-color, #04070f);
+      --surface: var(--tg-theme-secondary-bg-color, rgba(255,255,255,0.08));
+      --surface-strong: rgba(255,255,255,0.14);
+      --border: rgba(255,255,255,0.12);
+      --text: var(--tg-theme-text-color, #f8fafc);
+      --muted: var(--tg-theme-hint-color, #80a0c0);
       --accent: var(--tg-theme-button-color, #22c55e);
       --accent-text: var(--tg-theme-button-text-color, #ffffff);
-      --muted: var(--tg-theme-hint-color, #94a3b8);
+      --shadow: 0 26px 80px rgba(0,0,0,0.24);
     }
 
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100%; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif; }
-    body { background: radial-gradient(circle at top, rgba(56, 189, 248, 0.12), transparent 0%), var(--background); color: var(--tg-theme-text-color, #f8fafc); }
-    .app { max-width: 720px; margin: 0 auto; padding: 18px; }
-    header { padding: 18px; border: 1px solid var(--border); border-radius: 22px; background: var(--surface); }
-    header h1 { margin: 0 0 8px; font-size: 1.85rem; }
-    header p { margin: 0; color: var(--muted); line-height: 1.6; }
-    .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
-    .tab { padding: 14px 12px; border-radius: 18px; border: 1px solid var(--border); background: var(--surface); text-align: center; cursor: pointer; transition: border-color 0.18s ease, transform 0.18s ease; }
-    .tab:hover { transform: translateY(-1px); }
-    .tab.active { border-color: var(--accent); background: var(--surface-strong); }
-    .tab strong { display: block; font-size: 1rem; margin-bottom: 6px; }
-    .tab span { color: var(--muted); font-size: 0.9rem; }
-    .panel { display: none; padding: 18px; border-radius: 22px; border: 1px solid var(--border); background: var(--surface); }
+    body { background: radial-gradient(circle at top, rgba(96,165,250,0.14), transparent 22%), var(--bg); color: var(--text); padding-bottom: 108px; }
+    button, input { font: inherit; }
+    .app { max-width: 760px; margin: 0 auto; padding: 18px 16px 92px; }
+    .card { border-radius: 28px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); backdrop-filter: blur(18px); box-shadow: var(--shadow); }
+    .top-card { padding: 18px; display: flex; gap: 16px; align-items: center; }
+    .avatar { width: 68px; height: 68px; border-radius: 22px; overflow: hidden; background: linear-gradient(135deg, #60a5fa, #fbbf24); display: grid; place-items: center; }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .user-info h1 { margin: 0; font-size: 1.4rem; letter-spacing: -0.03em; }
+    .user-info p { margin: 6px 0 0; color: var(--muted); }
+    .badge-row { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .badge { padding: 10px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: var(--muted); font-size: 0.9rem; }
+    .section-title { margin: 0; font-size: 1.08rem; letter-spacing: -0.02em; }
+    .section-subtitle { margin: 8px 0 0; color: var(--muted); font-size: 0.95rem; line-height: 1.6; }
+    .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px; }
+    .tab-button { border: 1px solid var(--border); border-radius: 20px; background: rgba(255,255,255,0.05); color: var(--muted); text-align: center; padding: 12px 8px; transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease; }
+    .tab-button.active { background: rgba(34,197,94,0.18); color: var(--accent); border-color: rgba(34,197,94,0.35); }
+    .tab-button:hover { transform: translateY(-1px); }
+    .tab-button span { display: block; margin-top: 6px; font-size: 0.82rem; }
+    .panel { display: none; margin-top: 18px; }
     .panel.active { display: block; }
-    .package-grid, .method-grid { display: grid; gap: 12px; margin-top: 18px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
-    .card, .method { padding: 16px; border-radius: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; transition: transform 0.18s ease, border-color 0.18s ease; }
-    .card:hover, .method:hover { transform: translateY(-2px); border-color: var(--accent); }
-    .card-title, .method-title { margin: 0 0 8px; font-size: 1rem; font-weight: 700; }
-    .card-text, .method-text { margin: 0; color: var(--muted); font-size: 0.94rem; line-height: 1.5; }
-    .input-group { display: grid; gap: 10px; margin-top: 18px; }
-    label { color: var(--muted); font-size: 0.95rem; }
-    input { width: 100%; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--border); background: rgba(255,255,255,0.06); color: inherit; font-size: 1rem; }
-    .button { width: 100%; border: none; border-radius: 16px; padding: 14px 16px; background: var(--accent); color: var(--accent-text); cursor: pointer; font-size: 1rem; transition: transform 0.18s ease, opacity 0.18s ease; }
-    .button:hover { transform: translateY(-1px); opacity: 0.95; }
-    .status { margin-top: 18px; padding: 14px 16px; border-radius: 18px; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.24); color: #d1fae5; font-size: 0.95rem; }
-    .note { margin-top: 16px; color: var(--muted); font-size: 0.94rem; line-height: 1.6; }
-    footer { margin-top: 20px; text-align: center; color: var(--muted); font-size: 0.92rem; }
+    .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    .product-card, .method-card, .history-card { border-radius: 24px; padding: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; transition: transform 0.18s ease, border-color 0.18s ease; }
+    .product-card:hover, .method-card:hover, .history-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+    .product-card.active { border-color: var(--accent); box-shadow: inset 0 0 0 1px rgba(34,197,94,0.18); }
+    .product-name { margin: 0; font-weight: 700; }
+    .product-price { margin: 10px 0 0; color: var(--accent); font-weight: 700; }
+    .method-card { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .method-card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .switch-row { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; padding: 16px; border-radius: 22px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); }
+    .switch-label { margin: 0; font-weight: 700; }
+    .toggle { position: relative; width: 52px; height: 30px; border-radius: 999px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.12); }
+    .toggle input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .thumb { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 999px; background: var(--accent); transition: transform 0.2s ease; }
+    .toggle input:checked + .thumb { transform: translateX(22px); }
+    .input-group { margin-top: 16px; display: grid; gap: 10px; }
+    .input-group label { color: var(--muted); font-size: 0.95rem; }
+    .input-group input { width: 100%; border-radius: 18px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.05); padding: 14px 16px; color: var(--text); }
+    .pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: var(--muted); }
+    .button { width: 100%; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 14px 18px; background: rgba(34,197,94,0.14); color: var(--accent); font-weight: 700; cursor: pointer; transition: transform 0.18s ease, background 0.18s ease; }
+    .button:hover { transform: translateY(-1px); background: rgba(34,197,94,0.2); }
+    .card-text { margin: 10px 0 0; color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
+    .bottom-nav { position: fixed; inset: auto 0 0; z-index: 50; padding: 10px 12px 18px; background: rgba(4,7,15,0.96); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.08); display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .nav-button { border: none; border-radius: 18px; background: transparent; color: var(--muted); display: grid; place-items: center; gap: 6px; padding: 12px 8px; font-size: 0.82rem; transition: background 0.18s ease, color 0.18s ease; }
+    .nav-button.active { background: rgba(34,197,94,0.16); color: var(--accent); }
+    .toast { position: fixed; left: 50%; bottom: 100px; transform: translateX(-50%); z-index: 60; padding: 14px 18px; border-radius: 18px; background: rgba(12,17,30,0.96); color: #fff; box-shadow: 0 24px 70px rgba(0,0,0,0.3); opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+    .toast.show { opacity: 1; }
+    .loader { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; background: rgba(4,7,15,0.97); }
+    .duck-loader { width: 110px; height: 110px; position: relative; }
+    .duck-body { width: 100%; height: 100%; border-radius: 28px; background: linear-gradient(135deg, #facc15, #fb7185); position: relative; box-shadow: 0 24px 50px rgba(0,0,0,0.28); }
+    .duck-eye { width: 12px; height: 12px; border-radius: 50%; background: #0f172a; position: absolute; top: 30px; left: 36px; }
+    .duck-beak { width: 20px; height: 18px; border-radius: 10px 10px 12px 12px; background: #f97316; position: absolute; top: 46px; left: 42px; }
+    .duck-ring { position: absolute; inset: 0; border-radius: 30px; border: 4px solid rgba(255,255,255,0.18); animation: spin 1.4s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <h1>UzStar</h1>
-      <p>100 Stars = 20,000 UZS. Barcha paketlar, maxsus miqdor, referral va wallet shu yerda.</p>
-    </header>
+  <div id="loader" class="loader" aria-hidden="true">
+    <div class="duck-loader">
+      <div class="duck-body"></div>
+      <div class="duck-eye"></div>
+      <div class="duck-beak"></div>
+      <div class="duck-ring"></div>
+    </div>
+  </div>
 
-    <div class="tabs">
-      <button class="tab active" id="tab-stars" onclick="activateTab('stars')"><strong>⭐ Stars</strong><span>Paketlar</span></button>
-      <button class="tab" id="tab-referral" onclick="activateTab('referral')"><strong>🔗 Referral</strong><span>Havola</span></button>
-      <button class="tab" id="tab-wallet" onclick="activateTab('wallet')"><strong>💰 Wallet</strong><span>Balans</span></button>
+  <div class="app" id="app">
+    <section class="card top-card" aria-label="Profile summary">
+      <div class="avatar" id="user-avatar"><span>⭐</span></div>
+      <div class="user-info">
+        <h1 id="user-greeting">Hello, Star User</h1>
+        <p id="user-handle">@guest</p>
+        <div class="badge-row">
+          <span class="badge">Fixed 5 Stars/referral</span>
+          <span class="badge">100 Stars = 20,000 UZS</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="tabs" role="tablist" aria-label="Main sections">
+      <button class="tab-button active" data-section="stars" onclick="activateSection('stars')">⭐<span>Stars</span></button>
+      <button class="tab-button" data-section="referral" onclick="activateSection('referral')">👥<span>Referral</span></button>
+      <button class="tab-button" data-section="wallet" onclick="activateSection('wallet')">💰<span>Wallet</span></button>
+      <button class="tab-button" data-section="history" onclick="activateSection('history')">🕒<span>History</span></button>
     </div>
 
-    <section class="panel active" id="panel-stars">
-      <div class="note">Bazaviy narx: 1 Star = 200 UZS. Paketlar yoki maxsus buyurtma tanlang.</div>
-      <div class="package-grid" id="package-grid"></div>
+    <section class="panel active" id="section-stars" role="tabpanel">
+      <p class="section-title">Buy Stars</p>
+      <p class="section-subtitle">Choose a package, or type your custom amount. Then use Payme, Click or Alif to pay instantly.</p>
+      <div class="grid-2" id="package-grid"></div>
 
-      <div class="panel" style="margin-top:18px;">
-        <strong>Maxsus miqdor</strong>
+      <div class="card" style="margin-top:18px;">
+        <div class="section-title">Custom Amount</div>
+        <p class="section-subtitle">Minimum 50 Stars, automatic UZS pricing.</p>
         <div class="input-group">
-          <label for="custom-stars">Necha Stars kerak? (kamida 50)</label>
-          <input id="custom-stars" type="number" min="50" value="100" oninput="updateCustomPrice()" />
-          <div id="custom-price" class="note">100 Stars = 20,000 UZS</div>
-          <button class="button" onclick="prepareCustomPurchase()">Maxsus buyurtma</button>
+          <label for="custom-stars">Stars</label>
+          <input id="custom-stars" type="number" min="50" value="100" aria-label="Custom stars amount" />
+          <div class="pill" id="custom-price">100 Stars — 20,000 UZS</div>
         </div>
       </div>
 
-      <div class="panel" style="margin-top:18px;">
-        <strong>Payme va Click</strong>
-        <div class="method-grid">
-          <button class="button" style="background:#1d4ed8;" onclick="openCheckout('payme')">Payme orqali to'lash</button>
-          <button class="button" style="background:#f59e0b;" onclick="openCheckout('click')">Click orqali to'lash</button>
+      <div class="card" style="margin-top:18px;">
+        <div class="switch-row">
+          <div>
+            <p class="switch-label">Gift to friend</p>
+            <p class="section-subtitle" style="margin-top:6px;">Turn off for yourself, on for gifting.</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="gift-toggle" aria-label="Gift to friend toggle" />
+            <span class="thumb"></span>
+          </label>
+        </div>
+        <div class="input-group" id="gift-username-group" style="display:none;">
+          <label for="gift-username">Friend's @username</label>
+          <input id="gift-username" type="text" placeholder="@friend_username" />
         </div>
       </div>
     </section>
 
-    <section class="panel" id="panel-referral">
-      <div class="note">Do'stingiz birinchi xaridni amalga oshirganda sizga +5 Stars beriladi.</div>
-      <div style="margin-top:18px;padding:18px;border-radius:20px;border:1px solid var(--border);background:var(--surface);">
-        <p style="margin:0 0 10px;font-weight:700;">Sizning referral havolangiz</p>
-        <p id="referral-link" style="margin:0;color:var(--accent);word-break:break-all;">Botga ulanib, referral kodni oling.</p>
+    <section class="panel" id="section-referral" role="tabpanel">
+      <p class="section-title">Referral Program</p>
+      <p class="section-subtitle">Share your link and earn 5 Stars for each successful referral purchase.</p>
+      <div class="card" style="margin-top:18px;">
+        <p class="section-title">Your referral link</p>
+        <p class="section-subtitle" id="referral-link">Loading your link...</p>
+        <button class="button" id="copy-link">Copy Link</button>
       </div>
     </section>
 
-    <section class="panel" id="panel-wallet">
-      <div style="display:grid;gap:14px;">
-        <div style="padding:18px;border-radius:20px;border:1px solid var(--border);background:var(--surface);">
-          <p style="margin:0 0 8px;font-weight:700;">Wallet balansi</p>
-          <p id="wallet-balance" style="margin:0;color:var(--accent);font-size:1.1rem;">0 UZS</p>
+    <section class="panel" id="section-wallet" role="tabpanel">
+      <p class="section-title">Wallet</p>
+      <p class="section-subtitle">Built-in balance and star reserve for fast checkout.</p>
+      <div class="grid-2" style="margin-top:18px;">
+        <div class="product-card">
+          <p class="product-name">Available balance</p>
+          <p class="product-price" id="wallet-balance">0 UZS</p>
         </div>
-        <div style="padding:18px;border-radius:20px;border:1px solid var(--border);background:var(--surface);">
-          <p style="margin:0 0 8px;font-weight:700;">Star balansi</p>
-          <p id="star-balance" style="margin:0;color:var(--accent);font-size:1.1rem;">0 ⭐</p>
+        <div class="product-card">
+          <p class="product-name">Star balance</p>
+          <p class="product-price" id="star-balance">0 ⭐</p>
         </div>
-        <button class="button" onclick="requestWalletTopup()">Hamyonni to'ldirish</button>
       </div>
-      <div class="note">Bot orqali hamyon to'ldirishni so'rang, keyin Payme yoki Click bilan to‘lovni yakunlang.</div>
+      <div class="card" style="margin-top:18px;">
+        <p class="section-title">Quick top-up</p>
+        <p class="section-subtitle">Use Payme or Click, then confirm in bot.</p>
+        <div class="grid-2" style="margin-top:12px;">
+          <button class="method-card" onclick="selectPaymentMethod('payme', event)">Payme</button>
+          <button class="method-card" onclick="selectPaymentMethod('click', event)">Click</button>
+          <button class="method-card" onclick="selectPaymentMethod('alif', event)">Alif</button>
+        </div>
+        <button class="button" style="margin-top:14px;" onclick="selectPaymentMethod('wallet', event)">Use Wallet</button>
+      </div>
     </section>
 
-    <div id="status-box" class="status" style="display:none;"></div>
-    <footer>Native Telegram mini app uslubi uchun <strong>tg.expand()</strong> va <strong>tg.openLink()</strong> ishlatiladi.</footer>
+    <section class="panel" id="section-history" role="tabpanel">
+      <p class="section-title">Order History</p>
+      <p class="section-subtitle">Saved locally for faster reopen and history preview.</p>
+      <div id="history-list" style="margin-top:18px; display:grid; gap:12px;"></div>
+    </section>
   </div>
+
+  <div class="bottom-nav" role="navigation" aria-label="Bottom navigation">
+    <button class="nav-button active" data-section="stars" onclick="activateSection('stars')">⭐<span>Stars</span></button>
+    <button class="nav-button" data-section="referral" onclick="activateSection('referral')">👥<span>Referral</span></button>
+    <button class="nav-button" data-section="wallet" onclick="activateSection('wallet')">💰<span>Wallet</span></button>
+    <button class="nav-button" data-section="history" onclick="activateSection('history')">🕒<span>History</span></button>
+  </div>
+
+  <div class="toast" id="toast">Link Copied!</div>
 
   <script>
     const tg = window.Telegram.WebApp;
+    const user = tg.initDataUnsafe?.user || {};
+    const profile = {
+      name: user.first_name ? `${user.first_name}${user.last_name ? ' ' + user.last_name : ''}` : 'Star User',
+      handle: user.username ? `@${user.username}` : '@guest',
+      avatar: user.photo_url || ''
+    };
+
+    const PAYMENT_SCHEMES = {
+      payme: { app: 'payme://pay?receiver=YOUR_PAYME_ACCOUNT&amount=AMOUNT', fallback: 'https://payme.uz' },
+      click: { app: 'click://pay?receiver=YOUR_CLICK_ACCOUNT&amount=AMOUNT', fallback: 'https://click.uz' },
+      alif: { app: 'alifpay://transfer?receiver=YOUR_ALIF_ACCOUNT&amount=AMOUNT', fallback: 'https://alifpay.uz' }
+    };
+
     const packages = [
       { key: 'stars_100', label: '100 Stars', price: 20000 },
       { key: 'stars_150', label: '150 Stars', price: 30000 },
@@ -127,20 +219,54 @@
       { key: 'stars_10000', label: '10000 Stars', price: 2000000 }
     ];
 
-    let selectedOrder = null;
+    let selectedPackage = null;
+    let selectedMethod = 'payme';
+    let giftingFriend = false;
 
-    function initApp() {
+    const state = {
+      balanceUZS: Number(localStorage.getItem('tezstar_balance') || 0),
+      starBalance: Number(localStorage.getItem('tezstar_stars') || 0),
+      history: JSON.parse(localStorage.getItem('tezstar_history') || '[]')
+    };
+
+    const mainButton = tg.MainButton;
+
+    function init() {
+      renderUser();
+      renderPackages();
+      renderHistory();
+      updateWallet();
+      updateCustomPrice();
+      updateReferralLink();
+      activateSection('stars');
+      showLoader(false);
       tg.ready();
       tg.expand();
-      renderPackages();
-      setStatus('Paketni tanlang yoki maxsus buyurtma qiling.');
-      setReferralLink();
+      mainButton.setText('Choose package');
+      mainButton.hide();
+      mainButton.onClick(onMainButtonClick);
+      document.getElementById('gift-toggle').addEventListener('change', onGiftToggle);
+      document.getElementById('custom-stars').addEventListener('input', updateCustomPrice);
+      document.getElementById('copy-link').addEventListener('click', copyReferralLink);
     }
 
-    function activateTab(tabName) {
-      document.querySelectorAll('.tab').forEach(tab => tab.classList.toggle('active', tab.id === `tab-${tabName}`));
-      document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === `panel-${tabName}`));
-      if (tabName === 'referral') setReferralLink();
+    function showLoader(show) {
+      document.getElementById('loader').style.display = show ? 'grid' : 'none';
+    }
+
+    function renderUser() {
+      const avatar = document.getElementById('user-avatar');
+      if (profile.avatar) { avatar.innerHTML = `<img src="${profile.avatar}" alt="User avatar" />`; }
+      document.getElementById('user-greeting').textContent = `Hello, ${profile.name}`;
+      document.getElementById('user-handle').textContent = profile.handle;
+    }
+
+    function activateSection(section) {
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === `section-${section}`));
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.toggle('active', btn.dataset.section === section));
+      document.querySelectorAll('.nav-button').forEach(btn => btn.classList.toggle('active', btn.dataset.section === section));
+      playHaptic();
+      if (section === 'referral') updateReferralLink();
     }
 
     function renderPackages() {
@@ -149,24 +275,19 @@
       packages.forEach(pkg => {
         const card = document.createElement('button');
         card.type = 'button';
-        card.className = 'card';
-        card.innerHTML = `<div class="card-title">${pkg.label}</div><p class="card-text">${pkg.price.toLocaleString('uz-UZ')} UZS</p>`;
-        card.onclick = () => selectPackage(pkg);
+        card.className = 'product-card';
+        card.innerHTML = `<p class="product-name">${pkg.label}</p><p class="product-price">${formatUZS(pkg.price)}</p>`;
+        card.addEventListener('click', () => selectPackage(pkg, card));
         grid.appendChild(card);
       });
     }
 
-    function selectPackage(pkg) {
-      tg.HapticFeedback?.impactOccurred('medium');
-      selectedOrder = { product: pkg.key, amount: pkg.price };
-      showPaymentMethods(pkg.label, pkg.price, pkg.key);
-    }
-
-    function showCustomSection() {
-      document.getElementById('custom-panel').style.display = 'block';
-      document.getElementById('payment-panel').style.display = 'none';
-      document.getElementById('message-box').style.display = 'none';
-      updateCustomPrice();
+    function selectPackage(pkg, card) {
+      playHaptic();
+      selectedPackage = pkg;
+      document.querySelectorAll('.product-card').forEach(item => item.classList.remove('active'));
+      card.classList.add('active');
+      updateMainButton();
     }
 
     function updateCustomPrice() {
@@ -175,80 +296,141 @@
       if (count < 50) count = 50;
       input.value = count;
       const price = count * 200;
-      document.getElementById('custom-price').textContent = `${count.toLocaleString('uz-UZ')} Stars - ${price.toLocaleString('uz-UZ')} UZS`;
-      selectedOrder = { product: 'stars_custom', amount: price, count };
+      document.getElementById('custom-price').textContent = `${count.toLocaleString('uz-UZ')} Stars — ${formatUZS(price)}`;
+      selectedPackage = { key: 'stars_custom', label: `${count} Stars`, price, count };
+      document.querySelectorAll('.product-card').forEach(item => item.classList.remove('active'));
+      updateMainButton();
     }
 
     function prepareCustomPurchase() {
-      tg.HapticFeedback?.impactOccurred('medium');
+      playHaptic();
       updateCustomPrice();
-      showPaymentMethods(`${selectedOrder.count} Stars`, selectedOrder.amount, selectedOrder.product, selectedOrder.count);
+      if (selectedPackage) {
+        showToast(`${selectedPackage.label} tayyor. Endi to‘lovni yakunlang.`);
+      }
     }
 
-    function showPaymentMethods(title, amount, productKey, count = null) {
-      document.getElementById('custom-panel').style.display = 'none';
-      document.getElementById('payment-panel').style.display = 'block';
-      document.getElementById('payment-title').textContent = 'To\'lov usulini tanlang';
-      document.getElementById('payment-subtitle').textContent = `${title} — ${amount.toLocaleString('uz-UZ')} UZS`;
-
-      const grid = document.getElementById('payment-grid');
-      grid.innerHTML = '';
-      const methods = [
-        { label: 'Payme', action: () => openLink('https://payme.uz') },
-        { label: 'Click', action: () => openLink('https://click.uz') },
-        { label: 'Hamyondan', action: () => buyWithWallet(productKey, amount, count) }
-      ];
-
-      methods.forEach(method => {
-        const card = document.createElement('button');
-        card.type = 'button';
-        card.className = 'method';
-        card.innerHTML = `<div class="method-title">${method.label}</div><p class="method-text">${method.label === 'Hamyondan' ? 'Bot ichidagi balansdan to‘laydi' : 'Iltimos, ochilgan sahifada to‘lovni yakunlang.'}</p>`;
-        card.onclick = method.action;
-        grid.appendChild(card);
-      });
-
-      setStatus('To‘lov usulini tanladingiz. Agar Payme yoki Click bo‘lsa, yangi oynada ochiladi.');
+    function onGiftToggle(event) {
+      giftingFriend = event.target.checked;
+      document.getElementById('gift-username-group').style.display = giftingFriend ? 'grid' : 'none';
+      playHaptic();
     }
 
-    function openLink(url) {
-      tg.HapticFeedback?.impactOccurred('medium');
-      tg.openLink(url, { try_instant_view: true });
+    function selectPaymentMethod(method, event) {
+      selectedMethod = method;
+      document.querySelectorAll('.method-card').forEach(card => card.style.borderColor = 'rgba(255,255,255,0.08)');
+      if (event?.currentTarget) event.currentTarget.style.borderColor = 'var(--accent)';
+      updateMainButton();
+      playHaptic();
     }
 
-    function buyWithWallet(productKey, amount, count) {
-      tg.HapticFeedback?.impactOccurred('medium');
-      if (!productKey) {
-        setStatus('Iltimos, paketni tanlang.');
+    function updateMainButton() {
+      if (!selectedPackage) { mainButton.hide(); return; }
+      const text = selectedMethod === 'wallet' ? `Pay ${formatUZS(selectedPackage.price)} from Wallet` : `Pay ${formatUZS(selectedPackage.price)}`;
+      mainButton.setText(text);
+      mainButton.show();
+      mainButton.enable();
+    }
+
+    function onMainButtonClick() {
+      playHaptic();
+      if (!selectedPackage) return;
+      const giftName = giftingFriend ? (document.getElementById('gift-username').value.trim() || '@friend') : '@self';
+      saveHistory({ product: selectedPackage.label, price: selectedPackage.price, method: selectedMethod, gift: giftName, time: new Date().toISOString() });
+      if (selectedMethod === 'wallet') { return confirmWalletPayment(); }
+      openPaymentApp(selectedMethod, selectedPackage.price);
+    }
+
+    function openPaymentApp(method, amount) {
+      const config = PAYMENT_SCHEMES[method];
+      if (!config) return showToast('Payment method not configured.');
+      const scheme = config.app.replace('AMOUNT', amount);
+      if (!scheme.includes('YOUR_')) {
+        tg.openLink(scheme);
+      } else {
+        tg.openLink(config.fallback);
+        showToast('Payment scheme placeholder detected. Replace it in code.');
+      }
+    }
+
+    function confirmWalletPayment() {
+      if (state.balanceUZS < selectedPackage.price) {
+        showToast('Wallet balans yetarli emas. Boshqa to‘lov tanlang.');
         return;
       }
-      const payload = { action: 'purchase', product: productKey, method: 'wallet' };
-      if (productKey === 'stars_custom') payload.count = count;
-      tg.sendData(JSON.stringify(payload));
-      setStatus('To‘lov talabi yuborildi. Botdan javobni kuting.');
+      state.balanceUZS -= selectedPackage.price;
+      state.starBalance += Number(selectedPackage.label.match(/\d+/)?.[0] || 0);
+      persistState();
+      updateWallet();
+      showToast('Wallet orqali to‘lov bajarildi. Stars qo‘shildi!');
     }
 
     function requestWalletTopup() {
-      const payload = { action: 'topup', amount: 50000, method: 'wallet' };
-      tg.HapticFeedback?.impactOccurred('medium');
-      tg.sendData(JSON.stringify(payload));
-      setStatus('Hamyonni to‘ldirish uchun botga so‘rov yuborildi. Keyingi ko‘rsatmalarga qarang.');
+      playHaptic();
+      openPaymentApp('payme', 50000);
+      showToast('Payme va Click uchun appda to‘lovni yakunlang.');
     }
 
-    function setReferralLink() {
-      const username = tg.initDataUnsafe?.user?.username || 'bot';
-      const referralCode = tg.initDataUnsafe?.query_id || 'your_code_here';
-      const link = `https://t.me/${username}?start=${referralCode}`;
-      document.getElementById('referral-link').textContent = link;
+    function updateWallet() {
+      document.getElementById('wallet-balance').textContent = formatUZS(state.balanceUZS);
+      document.getElementById('star-balance').textContent = `${state.starBalance.toLocaleString('uz-UZ')} ⭐`;
     }
 
-    function setStatus(text) {
-      const box = document.getElementById('status-box');
-      box.textContent = text;
-      box.style.display = 'block';
+    function updateReferralLink() {
+      const code = tg.initDataUnsafe?.query_id || 'REFERRAL_CODE_PLACEHOLDER';
+      const username = user.username ? `@${user.username}` : 'tezstar';
+      document.getElementById('referral-link').textContent = `https://t.me/${username}?start=${code}`;
     }
 
-    initApp();
+    function copyReferralLink() {
+      const text = document.getElementById('referral-link').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Link Copied!');
+        playHaptic();
+      }).catch(() => showToast('Copy failed.'));
+    }
+
+    function saveHistory(entry) {
+      state.history.unshift(entry);
+      if (state.history.length > 12) state.history.pop();
+      localStorage.setItem('tezstar_history', JSON.stringify(state.history));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const list = document.getElementById('history-list');
+      list.innerHTML = '';
+      if (!state.history.length) {
+        list.innerHTML = `<div class="history-card"><p class="product-name">No orders yet</p><p class="card-text">Your purchase history will appear here.</p></div>`;
+        return;
+      }
+      state.history.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'history-card';
+        card.innerHTML = `<p class="product-name">${item.product}</p><p class="card-text">${item.method.toUpperCase()} · ${new Date(item.time).toLocaleString('uz-UZ')}</p><p class="product-price">${formatUZS(item.price)}</p><p class="card-text">${item.gift === '@self' ? 'Self purchase' : 'Gift to ' + item.gift}</p>`;
+        list.appendChild(card);
+      });
+    }
+
+    function formatUZS(amount) {
+      return `${amount.toLocaleString('uz-UZ')} UZS`;
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    function playHaptic() { tg.HapticFeedback?.impactOccurred('medium'); }
+
+    function persistState() {
+      localStorage.setItem('tezstar_balance', state.balanceUZS);
+      localStorage.setItem('tezstar_stars', state.starBalance);
+    }
+
+    init();
   </script>
 </body>
 </html>
