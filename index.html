@@ -3,107 +3,563 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Tez Star Mini App</title>
+  <title>Tez Star</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
       color-scheme: dark;
-      --bg: var(--tg-theme-bg-color, #04070f);
-      --surface: var(--tg-theme-secondary-bg-color, rgba(255,255,255,0.08));
-      --surface-strong: rgba(255,255,255,0.14);
+      --bg: #0a0d16;
+      --surface: rgba(20, 25, 42, 0.72);
+      --surface-strong: rgba(10, 14, 23, 0.96);
       --border: rgba(255,255,255,0.12);
-      --text: var(--tg-theme-text-color, #f8fafc);
-      --muted: var(--tg-theme-hint-color, #80a0c0);
-      --accent: var(--tg-theme-button-color, #22c55e);
-      --accent-text: var(--tg-theme-button-text-color, #ffffff);
-      --shadow: 0 26px 80px rgba(0,0,0,0.24);
+      --text: #f8fbff;
+      --muted: #94a3b8;
+      --accent: #4f9dff;
+      --accent-strong: #33a0ff;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #fb7185;
+      --card: rgba(15, 18, 33, 0.78);
+      --shadow: 0 35px 80px rgba(0,0,0,0.35);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     * { box-sizing: border-box; }
-    html, body { margin: 0; min-height: 100%; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif; }
-    body { background: radial-gradient(circle at top, rgba(96,165,250,0.14), transparent 22%), var(--bg); color: var(--text); padding-bottom: 108px; }
-    button, input { font: inherit; }
-    .app { max-width: 760px; margin: 0 auto; padding: 18px 16px 92px; }
-    .card { border-radius: 28px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); backdrop-filter: blur(18px); box-shadow: var(--shadow); }
-    .top-card { padding: 18px; display: flex; gap: 16px; align-items: center; }
-    .avatar { width: 68px; height: 68px; border-radius: 22px; overflow: hidden; background: linear-gradient(135deg, #60a5fa, #fbbf24); display: grid; place-items: center; }
-    .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .user-info h1 { margin: 0; font-size: 1.4rem; letter-spacing: -0.03em; }
-    .user-info p { margin: 6px 0 0; color: var(--muted); }
-    .badge-row { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
-    .badge { padding: 10px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: var(--muted); font-size: 0.9rem; }
-    .section-title { margin: 0; font-size: 1.08rem; letter-spacing: -0.02em; }
-    .section-subtitle { margin: 8px 0 0; color: var(--muted); font-size: 0.95rem; line-height: 1.6; }
-    .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px; }
-    .tab-button { border: 1px solid var(--border); border-radius: 20px; background: rgba(255,255,255,0.05); color: var(--muted); text-align: center; padding: 12px 8px; transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease; }
-    .tab-button.active { background: rgba(34,197,94,0.18); color: var(--accent); border-color: rgba(34,197,94,0.35); }
-    .tab-button:hover { transform: translateY(-1px); }
-    .tab-button span { display: block; margin-top: 6px; font-size: 0.82rem; }
-    .panel { display: none; margin-top: 18px; }
-    .panel.active { display: block; }
-    .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
-    .product-card, .method-card, .history-card { border-radius: 24px; padding: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; transition: transform 0.18s ease, border-color 0.18s ease; }
-    .product-card:hover, .method-card:hover, .history-card:hover { transform: translateY(-2px); border-color: var(--accent); }
-    .product-card.active { border-color: var(--accent); box-shadow: inset 0 0 0 1px rgba(34,197,94,0.18); }
-    .product-name { margin: 0; font-weight: 700; }
-    .product-price { margin: 10px 0 0; color: var(--accent); font-weight: 700; }
-    .method-card { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px; border-radius: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; transition: border-color 0.18s ease; }
-    .method-card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
-    .switch-row { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; padding: 16px; border-radius: 22px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); }
-    .switch-label { margin: 0; font-weight: 700; }
-    .toggle { position: relative; width: 52px; height: 30px; border-radius: 999px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.12); }
-    .toggle input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-    .thumb { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 999px; background: var(--accent); transition: transform 0.2s ease; }
-    .toggle input:checked + .thumb { transform: translateX(22px); }
-    .input-group { margin-top: 16px; display: grid; gap: 10px; }
-    .input-group label { color: var(--muted); font-size: 0.95rem; }
-    .input-group input { width: 100%; border-radius: 18px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.05); padding: 14px 16px; color: var(--text); }
-    .input-group select { width: 100%; border-radius: 18px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.05); padding: 14px 16px; color: var(--text); }
-    .pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: var(--muted); }
-    .button { width: 100%; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 14px 18px; background: rgba(34,197,94,0.14); color: var(--accent); font-weight: 700; cursor: pointer; transition: transform 0.18s ease, background 0.18s ease; }
-    .button:hover { transform: translateY(-1px); background: rgba(34,197,94,0.2); }
-    .button.secondary { background: rgba(255,255,255,0.08); color: var(--text); }
-    .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 18px; margin-top: 18px; }
-    .card-text { margin: 10px 0 0; color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
-    .bottom-nav { position: fixed; inset: auto 0 0; z-index: 50; padding: 10px 12px 18px; background: rgba(4,7,15,0.96); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.08); display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-    .nav-button { border: none; border-radius: 18px; background: transparent; color: var(--muted); display: grid; place-items: center; gap: 6px; padding: 12px 8px; font-size: 0.82rem; transition: background 0.18s ease, color 0.18s ease; }
-    .nav-button.active { background: rgba(34,197,94,0.16); color: var(--accent); }
-    .toast { position: fixed; left: 50%; bottom: 100px; transform: translateX(-50%); z-index: 60; padding: 14px 18px; border-radius: 18px; background: rgba(12,17,30,0.96); color: #fff; box-shadow: 0 24px 70px rgba(0,0,0,0.3); opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
-    .toast.show { opacity: 1; }
-    .toast.error { background: var(--error); }
-    .loader { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; background: rgba(4,7,15,0.97); }
-    .duck-loader { width: 110px; height: 110px; position: relative; }
-    .duck-body { width: 100%; height: 100%; border-radius: 28px; background: linear-gradient(135deg, #facc15, #fb7185); position: relative; box-shadow: 0 24px 50px rgba(0,0,0,0.28); }
-    .duck-eye { width: 12px; height: 12px; border-radius: 50%; background: #0f172a; position: absolute; top: 30px; left: 36px; }
-    .duck-beak { width: 20px; height: 18px; border-radius: 10px 10px 12px 12px; background: #f97316; position: absolute; top: 46px; left: 42px; }
-    .duck-ring { position: absolute; inset: 0; border-radius: 30px; border: 4px solid rgba(255,255,255,0.18); animation: spin 1.4s linear infinite; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, rgba(79,157,255,0.16), transparent 30%),
+                  radial-gradient(circle at 20% 10%, rgba(83,214,255,0.08), transparent 24%),
+                  var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    body.loaded { overflow: hidden; }
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      display: grid;
+      place-items: center;
+      background: rgba(7, 11, 24, 0.94);
+    }
+
+    .duck-loader {
+      width: 100px;
+      height: 100px;
+      position: relative;
+      animation: float 1.4s ease-in-out infinite;
+    }
+
+    .duck-body {
+      width: 100%;
+      height: 100%;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #facc15, #fb7185);
+      box-shadow: 0 26px 58px rgba(0,0,0,0.28);
+      position: relative;
+    }
+
+    .duck-eye {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #0f172a;
+      top: 30px;
+      left: 32px;
+      box-shadow: 24px 0 0 #0f172a;
+    }
+
+    .duck-beak {
+      position: absolute;
+      width: 22px;
+      height: 16px;
+      border-radius: 10px 10px 12px 12px;
+      background: #f97316;
+      top: 48px;
+      left: 40px;
+    }
+
+    .duck-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 40px;
+      border: 3px solid rgba(255,255,255,0.16);
+      animation: spin 1.4s linear infinite;
+    }
+
     @keyframes spin { to { transform: rotate(360deg); } }
-    .modal { position: fixed; inset: 0; z-index: 80; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
-    .modal.active { display: flex; }
-    .modal-content { background: var(--bg); border-radius: 28px; padding: 24px; max-width: 90%; width: 400px; border: 1px solid var(--border); box-shadow: var(--shadow); position: relative; }
-    .modal-title { margin: 0 0 18px; font-size: 1.2rem; }
-    .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; }
-    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 700; }
-    .status-pending { background: var(--warning); color: #000; }
-    .status-completed { background: var(--success); color: #fff; }
-    .status-cancelled { background: var(--error); color: #fff; }
-    .filter-tabs { display: flex; gap: 10px; margin-bottom: 18px; }
-    .filter-tab { padding: 8px 16px; border-radius: 18px; background: rgba(255,255,255,0.05); color: var(--muted); cursor: pointer; transition: background 0.18s ease, color 0.18s ease; }
-    .filter-tab.active { background: var(--accent); color: var(--accent-text); }
-    .paynet-image { width: 100%; height: 120px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 18px; display: grid; place-items: center; color: #000; font-weight: 700; margin-bottom: 18px; }
-    .referral-tabs { display: flex; gap: 10px; margin-bottom: 18px; }
-    .referral-tab { flex: 1; padding: 12px; border-radius: 18px; background: rgba(255,255,255,0.05); color: var(--muted); text-align: center; cursor: pointer; transition: background 0.18s ease, color 0.18s ease; }
-    .referral-tab.active { background: var(--accent); color: var(--accent-text); }
-    .referral-content { display: none; }
-    .referral-content.active { display: block; }
-    .friends-list { margin-top: 18px; }
-    .friend-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-radius: 18px; background: rgba(255,255,255,0.05); margin-bottom: 10px; }
-    .level { display: none; }
-    .level.active { display: block; }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+    .app-shell {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      padding: 20px 16px 92px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow: hidden;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .page-title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .page-title h1 {
+      margin: 0;
+      font-size: 1.35rem;
+      letter-spacing: -0.03em;
+    }
+
+    .page-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .profile-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(14px);
+      cursor: pointer;
+      transition: transform 0.18s ease;
+    }
+
+    .profile-pill:hover { transform: translateY(-1px); }
+    .profile-pill img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+    .profile-pill span { display: flex; flex-direction: column; line-height: 1.1; }
+    .profile-pill strong { font-size: 0.96rem; }
+    .profile-pill small { color: var(--muted); }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .hero-card {
+      display: grid;
+      gap: 16px;
+      align-items: center;
+      text-align: center;
+      padding: 24px 18px;
+    }
+
+    .hero-card h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .hero-card button {
+      width: fit-content;
+      margin: 0 auto;
+      padding: 12px 20px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #4f9dff, #33a0ff);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 18px 40px rgba(51,160,255,0.25);
+    }
+
+    .view {
+      display: none;
+      flex: 1;
+      overflow: hidden;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .view.active { display: flex; }
+    .content-scroll {
+      overflow-y: auto;
+      display: grid;
+      gap: 16px;
+      padding-right: 4px;
+    }
+
+    .section-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .category-card,
+    .option-card,
+    .package-card,
+    .history-card,
+    .invite-item,
+    .wallet-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      backdrop-filter: blur(12px);
+      padding: 18px;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+      cursor: pointer;
+    }
+
+    .category-card:hover,
+    .option-card:hover,
+    .package-card:hover,
+    .history-card:hover,
+    .invite-item:hover,
+    .wallet-panel:hover { transform: translateY(-1px); border-color: rgba(79,157,255,0.35); }
+
+    .category-card.active,
+    .option-card.active,
+    .package-card.active { border-color: rgba(79,157,255,0.55); }
+
+    .category-card {
+      display: grid;
+      gap: 12px;
+    }
+
+    .category-card h3,
+    .option-card h3,
+    .package-card h3 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .category-card p,
+    .option-card p,
+    .package-card p,
+    .wallet-panel p,
+    .invite-item p,
+    .history-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--warning);
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 10px;
+      width: fit-content;
+    }
+
+    .field {
+      display: grid;
+      gap: 10px;
+    }
+
+    .field label { color: var(--muted); font-size: 0.9rem; }
+    .field input,
+    .field select {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      background: rgba(10, 14, 23, 0.92);
+      color: var(--text);
+      font-size: 0.96rem;
+    }
+
+    .field input::placeholder { color: rgba(148,163,184,0.6); }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .pill.active {
+      background: rgba(79,157,255,0.18);
+      color: var(--text);
+      border-color: rgba(79,157,255,0.35);
+    }
+
+    .button {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 16px;
+      background: linear-gradient(135deg, #4f9dff, #33a0ff);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+    }
+
+    .button.secondary {
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+    }
+
+    .button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .bottom-nav {
+      position: fixed;
+      inset: auto 0 0;
+      z-index: 50;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 12px 14px 18px;
+      background: rgba(8, 12, 22, 0.96);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-item {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      padding: 10px 6px;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .nav-item.active {
+      background: rgba(79,157,255,0.16);
+      color: #fff;
+    }
+
+    .status-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-chip {
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .status-pending { background: rgba(251,191,36,0.16); color: #f59e0b; }
+    .status-completed { background: rgba(52,211,153,0.18); color: #34d399; }
+    .status-cancelled { background: rgba(251,113,133,0.18); color: #fb7185; }
+
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+      z-index: 80;
+    }
+
+    .drawer-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: -100%;
+      z-index: 90;
+      background: var(--surface-strong);
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 -20px 80px rgba(0,0,0,0.48);
+      padding: 22px 20px 28px;
+      transform: translateY(0);
+      transition: bottom 0.24s ease;
+    }
+
+    .drawer.active { bottom: 0; }
+
+    .drawer h2 {
+      margin: 0 0 14px;
+      font-size: 1.15rem;
+    }
+
+    .drawer-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1.35rem;
+    }
+
+    .wallet-terminal {
+      position: relative;
+      height: 180px;
+      overflow: hidden;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(30,42,86,0.84) 0%, rgba(5,10,19,0.96) 100%);
+      border: 1px solid rgba(255,255,255,0.12);
+      display: grid;
+      align-items: flex-end;
+      padding: 18px;
+      gap: 12px;
+      background-image: url('https://images.unsplash.com/photo-1585659115827-b87a534075b8?auto=format&fit=crop&w=900&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .wallet-terminal::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(6,10,22,0.35), rgba(6,10,22,0.8));
+      z-index: 0;
+    }
+
+    .wallet-terminal > * { position: relative; z-index: 1; }
+
+    .wallet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .wallet-header span { text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.75); font-size: 0.78rem; }
+
+    .wallet-balance {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .wallet-id {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      letter-spacing: 0.14em;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .pill-list {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill-list button {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+
+    .pill-list button.active { background: rgba(79,157,255,0.18); color: #fff; border-color: rgba(79,157,255,0.32); }
+
+    .copy-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .link-box {
+      flex: 1;
+      min-width: 150px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      padding: 14px 16px;
+      color: var(--text);
+      word-break: break-all;
+      font-size: 0.92rem;
+    }
+
+    .link-actions {
+      display: grid;
+      gap: 10px;
+      width: 160px;
+    }
+
+    .link-actions button { width: 100%; }
+
+    .slide-enter {
+      animation: slideIn 0.22s ease forwards;
+    }
+
+    @keyframes slideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
-  <div id="loader" class="loader" aria-hidden="true">
+  <div class="loader" id="loader">
     <div class="duck-loader">
       <div class="duck-body"></div>
       <div class="duck-eye"></div>
@@ -112,437 +568,571 @@
     </div>
   </div>
 
-  <div class="app" id="app">
-    <div class="header">
-      <div class="profile-icon" onclick="openSettingsModal()">👤</div>
-      <h1>Tez Star</h1>
-      <div class="profile-icon" onclick="openSettingsModal()">⚙️</div>
+  <div class="app-shell" id="app" aria-hidden="true">
+    <div class="top-bar">
+      <div class="page-title">
+        <h1>Tez Star</h1>
+        <p>Digital store for Stars, Premium and gifts</p>
+      </div>
+      <button class="profile-pill" id="profileButton" type="button">
+        <img id="profileAvatar" src="" alt="Profile" />
+        <span><strong id="profileName"></strong><small>Settings</small></span>
+      </button>
     </div>
 
-    <div class="tabs" role="tablist" aria-label="Main sections">
-      <button class="tab-button active" data-section="shop" onclick="activateSection('shop')">🛒<span>Shop</span></button>
-      <button class="tab-button" data-section="referral" onclick="activateSection('referral')">👥<span>Referral</span></button>
-      <button class="tab-button" data-section="wallet" onclick="activateSection('wallet')">💰<span>Wallet</span></button>
-      <button class="tab-button" data-section="history" onclick="activateSection('history')">🕒<span>History</span></button>
+    <div class="view active" id="view-shop">
+      <div class="content-scroll" id="shopContent">
+        <div class="hero-card card">
+          <h2>Your premium shop experience</h2>
+          <p>Fast Telegram payments with Glassmorphism UI and Uzbek payment methods.</p>
+          <button type="button" onclick="switchView('referral')">Invite friends</button>
+        </div>
+
+        <div class="card section-grid" id="shopStep1">
+          <h3>What do you want?</h3>
+          <div class="grid-3">
+            <button class="category-card" type="button" onclick="selectCategory('stars')">
+              <h3>⭐ Buy Stars</h3>
+              <p>Top up stars for yourself or friends.</p>
+            </button>
+            <button class="category-card" type="button" onclick="selectCategory('premium')">
+              <h3>💎 Telegram Premium</h3>
+              <p>Premium access with savings and gifts.</p>
+            </button>
+            <button class="category-card" type="button" onclick="selectCategory('gifts')">
+              <h3>🎁 Digital Gifts</h3>
+              <p>Send premium gifts instantly.</p>
+            </button>
+          </div>
+        </div>
+
+        <div class="card section-grid" id="shopStep2" style="display:none;">
+          <div class="status-dot"><strong>Step 2</strong><span>Choose recipient</span></div>
+          <div class="pill-row">
+            <button class="pill active" type="button" id="recipientSelf" onclick="setRecipient('self')">For myself</button>
+            <button class="pill" type="button" id="recipientGift" onclick="setRecipient('gift')">Gift to friend</button>
+          </div>
+          <div class="field" id="giftInputRow" style="display:none;">
+            <label for="giftUsername">Friend @username</label>
+            <input id="giftUsername" type="text" placeholder="@friendname" maxlength="32" oninput="updateGiftUsername()" />
+          </div>
+          <button class="button" id="giftContinueButton" type="button" style="display:none;" onclick="setRecipientAndContinue()">Continue</button>
+        </div>
+
+        <div class="card section-grid" id="shopStep3" style="display:none;">
+          <div class="status-dot"><strong>Step 3</strong><span>Select a package</span></div>
+          <div class="field" id="selectedCategoryLabel"></div>
+          <div class="grid-2" id="packageGrid"></div>
+          <div class="field" id="customStarsRow" style="display:none;">
+            <label for="customStars">Custom Stars amount</label>
+            <input id="customStars" type="number" min="50" placeholder="50" oninput="updateCustomAmount()" />
+            <p id="customPrice" style="color: var(--muted);">Price will update automatically.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Shop Section -->
-    <section class="panel active" id="section-shop" role="tabpanel">
-      <div class="level active" id="shop-level-1">
-        <p class="section-title">Choose Category</p>
-        <div class="grid-3">
-          <button class="product-card" onclick="goToShopLevel(2, 'stars')">
-            <p class="product-name">⭐ Stars</p>
-            <p class="card-text">Buy Telegram Stars</p>
-          </button>
-          <button class="product-card" onclick="goToShopLevel(2, 'premium')">
-            <p class="product-name">💎 Premium</p>
-            <p class="card-text">Telegram Premium</p>
-          </button>
-          <button class="product-card" onclick="goToShopLevel(2, 'gifts')">
-            <p class="product-name">🎁 Gifts</p>
-            <p class="card-text">Send Gifts</p>
-          </button>
+    <div class="view" id="view-referral">
+      <div class="content-scroll">
+        <div class="card">
+          <h3>Referral program</h3>
+          <p>Get 5 Stars for friend star purchases and 15 Stars for Premium.</p>
+        </div>
+        <div class="card">
+          <div class="copy-row">
+            <div class="link-box" id="referralLink"></div>
+            <div class="link-actions">
+              <button class="button secondary" type="button" onclick="copyReferralLink()">Copy</button>
+              <button class="button" type="button" onclick="inviteFriends()">Invite</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Invited users</h3>
+          <div id="invitedUsers" class="section-grid"></div>
         </div>
       </div>
+    </div>
 
-      <div class="level" id="shop-level-2">
-        <p class="section-title">For Whom?</p>
-        <div class="grid-2">
-          <button class="product-card" onclick="selectRecipient('myself')">
-            <p class="product-name">For Myself</p>
-            <p class="card-text">@{{user.username || 'username'}}</p>
-          </button>
-          <button class="product-card" onclick="selectRecipient('friend')">
-            <p class="product-name">For Friend</p>
-            <p class="card-text">Enter username</p>
-          </button>
+    <div class="view" id="view-wallet">
+      <div class="content-scroll">
+        <div class="wallet-terminal card">
+          <div class="wallet-header">
+            <span>Available balance</span>
+            <span>UZS</span>
+          </div>
+          <div class="wallet-balance" id="walletBalance">0</div>
+        </div>
+
+        <div class="card wallet-panel">
+          <h3>Paynet ID</h3>
+          <p>Enter this ID at any Paynet terminal.</p>
+          <div class="wallet-id" id="paynetId"></div>
+        </div>
+
+        <div class="card">
+          <div class="pill-list">
+            <button type="button" class="active" id="depTab" onclick="setWalletTab('deposits')">Deposit</button>
+            <button type="button" id="expTab" onclick="setWalletTab('expenses')">Expenses</button>
+          </div>
+          <div id="walletList" class="section-grid" style="margin-top: 14px;"></div>
         </div>
       </div>
+    </div>
 
-      <div class="level" id="shop-level-3">
-        <p class="section-title" id="package-title">Select Package</p>
-        <div class="input-group" id="custom-input-group" style="display: none;">
-          <label for="custom-amount">Custom Amount</label>
-          <input id="custom-amount" type="number" min="50" placeholder="Min 50" />
+    <div class="view" id="view-history">
+      <div class="content-scroll">
+        <div class="card">
+          <div class="pill-list">
+            <button type="button" class="active" id="filterAll" onclick="setHistoryFilter('all')">All</button>
+            <button type="button" id="filterStars" onclick="setHistoryFilter('stars')">⭐ Stars</button>
+            <button type="button" id="filterPremium" onclick="setHistoryFilter('premium')">💎 Premium</button>
+            <button type="button" id="filterGifts" onclick="setHistoryFilter('gifts')">🎁 Gifts</button>
+          </div>
         </div>
-        <div class="grid-2" id="package-grid"></div>
-        <button class="button secondary" onclick="goToShopLevel(2)">Back</button>
+        <div id="historyList" class="section-grid"></div>
       </div>
-    </section>
-
-    <!-- Referral Section -->
-    <section class="panel" id="section-referral" role="tabpanel">
-      <div class="referral-tabs">
-        <button class="referral-tab active" data-type="stars" onclick="switchReferralTab('stars')">⭐ Stars</button>
-        <button class="referral-tab" data-type="premium" onclick="switchReferralTab('premium')">💎 Premium</button>
-      </div>
-      <div id="referral-content-stars" class="referral-content active">
-        <p class="section-title">Invite Friends for Stars</p>
-        <p class="section-subtitle">Earn 5 Stars for each 100-Star purchase by your referrals.</p>
-        <button class="button" onclick="inviteFriends()">Invite Friends</button>
-        <div class="friends-list" id="friends-list-stars"></div>
-      </div>
-      <div id="referral-content-premium" class="referral-content">
-        <p class="section-title">Invite Friends for Premium</p>
-        <p class="section-subtitle">Earn 15 Stars for each Premium purchase by your referrals.</p>
-        <button class="button" onclick="inviteFriends()">Invite Friends</button>
-        <div class="friends-list" id="friends-list-premium"></div>
-      </div>
-    </section>
-
-    <!-- Wallet Section -->
-    <section class="panel" id="section-wallet" role="tabpanel">
-      <p class="section-title">Top-up Wallet</p>
-      <div class="paynet-image">Paynet Terminal</div>
-      <p class="section-subtitle">Your Paynet ID: <strong id="paynet-id">{{user.id}}</strong></p>
-      <div class="grid-2">
-        <button class="method-card" onclick="selectPaymentMethod('payme')">Payme</button>
-        <button class="method-card" onclick="selectPaymentMethod('click')">Click</button>
-        <button class="method-card" onclick="selectPaymentMethod('paynet')">Paynet</button>
-        <button class="method-card" onclick="selectPaymentMethod('alif')">Alif</button>
-      </div>
-      <div class="card" style="margin-top:18px;">
-        <p class="section-title">Deposits</p>
-        <div id="deposits-list"></div>
-      </div>
-      <div class="card" style="margin-top:18px;">
-        <p class="section-title">Expenses</p>
-        <div id="expenses-list"></div>
-      </div>
-    </section>
-
-    <!-- History Section -->
-    <section class="panel" id="section-history" role="tabpanel">
-      <div class="filter-tabs">
-        <button class="filter-tab active" data-filter="all" onclick="filterHistory('all')">All</button>
-        <button class="filter-tab" data-filter="stars" onclick="filterHistory('stars')">Stars</button>
-        <button class="filter-tab" data-filter="premium" onclick="filterHistory('premium')">Premium</button>
-        <button class="filter-tab" data-filter="gifts" onclick="filterHistory('gifts')">Gifts</button>
-      </div>
-      <div id="history-list"></div>
-    </section>
+    </div>
   </div>
 
   <div class="bottom-nav" role="navigation" aria-label="Bottom navigation">
-    <button class="nav-button active" data-section="shop" onclick="activateSection('shop')">🛒<span>Shop</span></button>
-    <button class="nav-button" data-section="referral" onclick="activateSection('referral')">👥<span>Referral</span></button>
-    <button class="nav-button" data-section="wallet" onclick="activateSection('wallet')">💰<span>Wallet</span></button>
-    <button class="nav-button" data-section="history" onclick="activateSection('history')">🕒<span>History</span></button>
+    <button class="nav-item active" type="button" onclick="switchView('shop')">🏠<span>Shop</span></button>
+    <button class="nav-item" type="button" onclick="switchView('referral')">👥<span>Referral</span></button>
+    <button class="nav-item" type="button" onclick="switchView('wallet')">💰<span>Wallet</span></button>
+    <button class="nav-item" type="button" onclick="switchView('history')">🕒<span>History</span></button>
   </div>
 
-  <!-- Settings Modal -->
-  <div class="modal" id="settings-modal">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closeSettingsModal()">×</button>
-      <h2 class="modal-title">Settings</h2>
-      <div class="input-group">
-        <label>Language</label>
-        <select id="language-select">
-          <option value="en">English</option>
-          <option value="uz" selected>Uzbek</option>
-          <option value="ru">Russian</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label>Default Payment</label>
-        <select id="payment-select">
-          <option value="payme" selected>Payme</option>
-          <option value="click">Click</option>
-          <option value="paynet">Paynet</option>
-          <option value="alif">Alif</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label>Support</label>
-        <button class="button secondary" onclick="openSupport('@YourSupportUser')">Contact Support</button>
-        <button class="button secondary" onclick="openSupport('@YourChannel')">Join Channel</button>
-      </div>
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeSettings()"></div>
+  <div class="drawer" id="settingsDrawer">
+    <button class="drawer-close" type="button" onclick="closeSettings()">×</button>
+    <h2>Settings</h2>
+    <div class="field">
+      <label for="languageSelect">Language</label>
+      <select id="languageSelect" onchange="updateSettings()">
+        <option value="uz">Uzbek</option>
+        <option value="en">English</option>
+        <option value="ru">Русский</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="paymentSelect">Primary payment</label>
+      <select id="paymentSelect" onchange="updateSettings()">
+        <option value="payme">Payme</option>
+        <option value="click">Click</option>
+        <option value="paynet">Paynet</option>
+        <option value="alif">Alif</option>
+      </select>
+    </div>
+    <div class="field">
+      <button class="button secondary" type="button" onclick="openSupport('@SupportUser')">Support</button>
+      <button class="button secondary" type="button" onclick="openSupport('@OurChannel')">Channel</button>
     </div>
   </div>
 
-  <div class="toast" id="toast">Message</div>
-
   <script>
     const tg = window.Telegram.WebApp;
-    const user = tg.initDataUnsafe?.user || { id: '123456789', username: 'guest' };
+    const user = tg.initDataUnsafe?.user || { id: '000000000', first_name: 'Guest', username: 'guest', photo_url: '' };
+    const mainButton = tg.MainButton;
     const backButton = tg.BackButton;
 
-    const PAYMENT_SCHEMES = {
-      payme: { app: 'payme://pay?receiver=YOUR_PAYME_ACCOUNT&amount=AMOUNT', fallback: 'https://payme.uz' },
-      click: { app: 'click://pay?receiver=YOUR_CLICK_ACCOUNT&amount=AMOUNT', fallback: 'https://click.uz' },
-      paynet: { app: 'paynet://pay?receiver=YOUR_PAYNET_ACCOUNT&amount=AMOUNT', fallback: 'https://paynet.uz' },
-      alif: { app: 'alifpay://transfer?receiver=YOUR_ALIF_ACCOUNT&amount=AMOUNT', fallback: 'https://alifpay.uz' }
-    };
-
-    const starPackages = [50, 100, 150, 250, 350, 500, 750, 1000, 1500, 2500, 5000, 10000];
-    const premiumPackages = [
-      { label: '3 Months', price: 155999, discount: '-20%' },
-      { label: '6 Months', price: 215999, discount: '-37%' },
-      { label: '1 Year', price: 385999, discount: '-42%' }
+    const STAR_PACKAGES = [50,100,150,250,350,500,750,1000,1500,2500,5000,10000];
+    const PREMIUM_PACKAGES = [
+      { label: '3 Months', price: 155999, badge: '-20%' },
+      { label: '6 Months', price: 215999, badge: '-37%' },
+      { label: '1 Year', price: 385999, badge: '-42%' }
     ];
 
-    let currentSection = 'shop';
-    let shopLevel = 1;
-    let selectedCategory = '';
-    let selectedRecipient = '';
-    let selectedMethod = 'payme';
-    let referralType = 'stars';
-
-    const state = {
-      balanceUZS: Number(localStorage.getItem('tezstar_balance') || 0),
-      starBalance: Number(localStorage.getItem('tezstar_stars') || 0),
-      history: JSON.parse(localStorage.getItem('tezstar_history') || '[{"product":"100 Stars","price":20000,"method":"payme","time":"2024-01-01T10:00:00Z","status":"completed","type":"stars"}]'),
-      friends: JSON.parse(localStorage.getItem('tezstar_friends') || '[{"name":"Friend1"}]'),
-      language: localStorage.getItem('tezstar_language') || 'uz',
-      defaultPayment: localStorage.getItem('tezstar_payment') || 'payme'
+    const PAYMENT_SCHEMES = {
+      payme: 'payme://pay?receiver=YOUR_PAYME_ACCOUNT&amount=AMOUNT',
+      click: 'clickuz://pay?receiver=YOUR_CLICK_ACCOUNT&amount=AMOUNT',
+      paynet: 'paynet://pay?receiver=YOUR_PAYNET_ACCOUNT&amount=AMOUNT',
+      alif: 'alifpay://transfer?receiver=YOUR_ALIF_ACCOUNT&amount=AMOUNT'
     };
 
-    const mainButton = tg.MainButton;
+    const state = {
+      currentView: 'shop',
+      shopStep: 1,
+      selectedCategory: null,
+      recipientType: 'self',
+      giftUsername: '',
+      selectedPackage: null,
+      selectedPayment: 'payme',
+      walletTab: 'deposits',
+      historyFilter: 'all',
+      invitedUsers: [
+        { name: '@ali_uz', reward: '+5 ⭐' },
+        { name: '@murod123', reward: '+15 ⭐' }
+      ],
+      history: [
+        { type: 'stars', title: '100 Stars', method: 'Payme', amount: 19999, status: 'completed', time: '07 May 2026, 01:20' },
+        { type: 'premium', title: '6 Months Premium', method: 'Click', amount: 215999, status: 'pending', time: '06 May 2026, 23:48' },
+        { type: 'gifts', title: 'Gift to @shahzod', method: 'Payme', amount: 49999, status: 'cancelled', time: '05 May 2026, 19:32' }
+      ],
+      wallet: {
+        balance: 0,
+        deposits: [ { title: 'Payme top-up', amount: 50000, time: '07 May 2026' } ],
+        expenses: [ { title: 'Stars purchase', amount: 19999, time: '06 May 2026' } ]
+      },
+      settings: {
+        language: 'uz',
+        payment: 'payme'
+      }
+    };
 
     function init() {
-      renderUser();
-      renderPackages();
+      document.getElementById('profileName').textContent = user.first_name || 'Guest';
+      document.getElementById('profileAvatar').src = user.photo_url || 'https://telegram.org/img/t_logo.png';
+      document.getElementById('paynetId').textContent = formatPaynetId(user.id);
+      document.getElementById('referralLink').textContent = `https://t.me/tezstarbot?start=${user.id}`;
+      document.getElementById('languageSelect').value = state.settings.language;
+      document.getElementById('paymentSelect').value = state.settings.payment;
+      renderInvitedUsers();
+      renderWallet();
       renderHistory();
-      renderFriends();
-      updateWallet();
-      activateSection('shop');
-      showLoader(false);
+      updateShopScreen();
+      switchView('shop');
       tg.ready();
       tg.expand();
-      mainButton.setText('Choose package');
-      mainButton.hide();
-      mainButton.onClick(onMainButtonClick);
-      backButton.onClick(onBackButtonClick);
-      document.getElementById('custom-amount').addEventListener('input', validateCustomAmount);
-      document.getElementById('language-select').value = state.language;
-      document.getElementById('payment-select').value = state.defaultPayment;
-      document.getElementById('paynet-id').textContent = user.id;
+      tg.MainButton.hide();
+      tg.MainButton.onClick(onMainButtonClick);
+      backButton.onClick(onBackPressed);
+      hideLoader();
     }
 
-    function showLoader(show) {
-      document.getElementById('loader').style.display = show ? 'grid' : 'none';
+    function hideLoader() {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('app').removeAttribute('aria-hidden');
+      document.body.classList.add('loaded');
     }
 
-    function renderUser() {
-      // Update profile if needed
+    function haptic() {
+      tg.HapticFeedback?.impactOccurred('medium');
     }
 
-    function activateSection(section) {
-      currentSection = section;
-      document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === `section-${section}`));
-      document.querySelectorAll('.tab-button, .nav-button').forEach(btn => btn.classList.toggle('active', btn.dataset.section === section));
-      playHaptic();
-      backButton.hide();
-      shopLevel = 1;
-      updateShopLevels();
-    }
-
-    function goToShopLevel(level, category = '') {
-      playHaptic();
-      shopLevel = level;
-      selectedCategory = category;
-      updateShopLevels();
-      if (level > 1) backButton.show();
-    }
-
-    function updateShopLevels() {
-      document.querySelectorAll('.level').forEach(level => level.classList.remove('active'));
-      document.getElementById(`shop-level-${shopLevel}`).classList.add('active');
-      if (shopLevel === 3) {
-        renderPackageGrid();
+    function switchView(view) {
+      state.currentView = view;
+      document.querySelectorAll('.view').forEach(el => el.classList.toggle('active', el.id === `view-${view}`));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.textContent.trim().startsWith(getNavIcon(view))));
+      if (view !== 'shop') {
+        backButton.hide();
+        tg.MainButton.hide();
+      } else {
+        updateShopScreen();
       }
+      haptic();
     }
 
-    function selectRecipient(recipient) {
-      playHaptic();
-      selectedRecipient = recipient;
-      goToShopLevel(3);
+    function getNavIcon(view) {
+      return { shop: '🏠', referral: '👥', wallet: '💰', history: '🕒' }[view] || '🏠';
     }
 
-    function renderPackageGrid() {
-      const grid = document.getElementById('package-grid');
-      const title = document.getElementById('package-title');
-      const customGroup = document.getElementById('custom-input-group');
-      grid.innerHTML = '';
+    function setShopStep(step) {
+      state.shopStep = step;
+      updateShopScreen();
+      haptic();
+    }
 
-      if (selectedCategory === 'stars') {
-        title.textContent = 'Select Stars Package';
-        customGroup.style.display = 'grid';
-        starPackages.forEach(count => {
-          const price = Math.floor(count * 199.99);
+    function selectCategory(category) {
+      state.selectedCategory = category;
+      state.selectedPackage = null;
+      state.giftUsername = '';
+      state.recipientType = 'self';
+      setShopStep(2);
+    }
+
+    function setRecipient(type) {
+      state.recipientType = type;
+      document.getElementById('recipientSelf').classList.toggle('active', type === 'self');
+      document.getElementById('recipientGift').classList.toggle('active', type === 'gift');
+      document.getElementById('giftInputRow').style.display = type === 'gift' ? 'block' : 'none';
+      state.giftUsername = '';
+      document.getElementById('giftUsername').value = '';
+      updateShopScreen();
+      haptic();
+    }
+
+    function updateGiftUsername() {
+      state.giftUsername = document.getElementById('giftUsername').value.trim();
+      updateMainButton();
+    }
+
+    function updateCustomAmount() {
+      const value = parseInt(document.getElementById('customStars').value, 10);
+      const amount = Number.isNaN(value) ? 0 : Math.max(50, value);
+      document.getElementById('customStars').value = amount;
+      const price = calculateStarsPrice(amount);
+      state.selectedPackage = { label: `${amount} Stars`, price, type: 'stars', custom: true };
+      document.getElementById('customPrice').textContent = `${amount} Stars — ${formatUZS(price)}`;
+      updateMainButton();
+      haptic();
+    }
+
+    function updateShopScreen() {
+      document.getElementById('shopStep1').style.display = state.shopStep === 1 ? 'block' : 'none';
+      document.getElementById('shopStep2').style.display = state.shopStep === 2 ? 'block' : 'none';
+      document.getElementById('shopStep3').style.display = state.shopStep === 3 ? 'block' : 'none';
+      document.getElementById('selectedCategoryLabel').textContent = state.selectedCategory ? `Selected: ${capitalize(state.selectedCategory)}` : '';
+      const giftContinue = document.getElementById('giftContinueButton');
+      giftContinue.style.display = state.recipientType === 'gift' ? 'block' : 'none';
+      document.getElementById('giftInputRow').style.display = state.recipientType === 'gift' ? 'block' : 'none';
+      if (state.shopStep === 3) {
+        renderPackages();
+        backButton.show();
+      } else if (state.shopStep === 2) {
+        backButton.show();
+      } else {
+        backButton.hide();
+      }
+      updateMainButton();
+    }
+
+    function renderPackages() {
+      const container = document.getElementById('packageGrid');
+      container.innerHTML = '';
+      if (state.selectedCategory === 'stars') {
+        STAR_PACKAGES.forEach(count => {
+          const price = calculateStarsPrice(count);
           const card = document.createElement('button');
           card.type = 'button';
-          card.className = 'product-card';
-          card.innerHTML = `<p class="product-name">${count.toLocaleString('uz-UZ')} Stars</p><p class="product-price">${formatUZS(price)}</p><span class="badge">-20%</span>`;
-          card.addEventListener('click', () => selectPackage({ type: 'stars', count, price }));
-          grid.appendChild(card);
+          card.className = `package-card${state.selectedPackage?.label === `${count} Stars` ? ' active' : ''}`;
+          card.innerHTML = `<div><h3>⭐ ${count} Stars</h3><p>${formatUZS(price)}</p></div><span class="badge">-20%</span>`;
+          card.onclick = () => selectPackage({ label: `${count} Stars`, price, type: 'stars' });
+          container.appendChild(card);
         });
-      } else if (selectedCategory === 'premium') {
-        title.textContent = 'Select Premium Package';
-        customGroup.style.display = 'none';
-        premiumPackages.forEach(pkg => {
+        document.getElementById('customStarsRow').style.display = 'block';
+      } else if (state.selectedCategory === 'premium') {
+        PREMIUM_PACKAGES.forEach(pkg => {
           const card = document.createElement('button');
           card.type = 'button';
-          card.className = 'product-card';
-          card.innerHTML = `<p class="product-name">${pkg.label}</p><p class="product-price">${formatUZS(pkg.price)}</p><span class="badge">${pkg.discount}</span>`;
-          card.addEventListener('click', () => selectPackage({ type: 'premium', ...pkg }));
-          grid.appendChild(card);
+          card.className = `package-card${state.selectedPackage?.label === pkg.label ? ' active' : ''}`;
+          card.innerHTML = `<div><h3>💎 ${pkg.label}</h3><p>${formatUZS(pkg.price)}</p></div><span class="badge">${pkg.badge}</span>`;
+          card.onclick = () => selectPackage({ ...pkg, type: 'premium' });
+          container.appendChild(card);
         });
-      } else if (selectedCategory === 'gifts') {
-        title.textContent = 'Select Gift';
-        customGroup.style.display = 'none';
-        // Add gift options here
+        document.getElementById('customStarsRow').style.display = 'none';
+      } else {
+        const gifts = [
+          { label: 'Golden Ribbon', price: 29999 },
+          { label: 'Gift Box', price: 49999 },
+          { label: 'Star Burst', price: 79999 }
+        ];
+        gifts.forEach(gift => {
+          const card = document.createElement('button');
+          card.type = 'button';
+          card.className = `package-card${state.selectedPackage?.label === gift.label ? ' active' : ''}`;
+          card.innerHTML = `<div><h3>🎁 ${gift.label}</h3><p>${formatUZS(gift.price)}</p></div><span class="badge">Best choice</span>`;
+          card.onclick = () => selectPackage({ ...gift, type: 'gifts' });
+          container.appendChild(card);
+        });
+        document.getElementById('customStarsRow').style.display = 'none';
       }
     }
 
     function selectPackage(pkg) {
-      playHaptic();
-      selectedPackage = pkg;
-      document.querySelectorAll('.product-card').forEach(item => item.classList.remove('active'));
-      event.currentTarget.classList.add('active');
-      updateMainButton();
+      state.selectedPackage = pkg;
+      updateShopScreen();
+      haptic();
     }
 
-    function validateCustomAmount() {
-      const input = document.getElementById('custom-amount');
-      const value = Number(input.value);
-      if (value < 50) {
-        input.classList.add('error');
-        showToast('Minimum 50 Stars required', 'error');
-      } else {
-        input.classList.remove('error');
-        const price = Math.floor(value * 199.99);
-        selectedPackage = { type: 'stars', count: value, price };
-        updateMainButton();
-      }
+    function calculateStarsPrice(count) {
+      return Math.round(count * 199.99);
     }
 
-    function selectPaymentMethod(method) {
-      selectedMethod = method;
-      document.querySelectorAll('.method-card').forEach(card => card.style.borderColor = 'rgba(255,255,255,0.08)');
-      event.currentTarget.style.borderColor = 'var(--accent)';
-      updateMainButton();
-      playHaptic();
+    function formatUZS(value) {
+      return `${value.toLocaleString('uz-UZ')} UZS`;
     }
 
-    function updateMainButton() {
-      if (!selectedPackage) { mainButton.hide(); return; }
-      const text = `Pay ${formatUZS(selectedPackage.price)}`;
-      mainButton.setText(text);
-      mainButton.show();
-      mainButton.enable();
+    function setHistoryFilter(filter) {
+      state.historyFilter = filter;
+      document.querySelectorAll('#view-history .pill-list button').forEach(btn => btn.classList.toggle('active', btn.textContent.trim().toLowerCase().includes(filter === 'all' ? 'all' : filter)));
+      renderHistory();
+      haptic();
     }
 
-    function onMainButtonClick() {
-      playHaptic();
-      if (!selectedPackage) return;
-      openPaymentApp(selectedMethod, selectedPackage.price);
-    }
-
-    function openPaymentApp(method, amount) {
-      const config = PAYMENT_SCHEMES[method];
-      if (!config) return showToast('Payment method not configured.');
-      const scheme = config.app.replace('AMOUNT', amount);
-      if (!scheme.includes('YOUR_')) {
-        tg.openLink(scheme);
-      } else {
-        tg.openLink(config.fallback);
-        showToast('Payment scheme placeholder detected. Replace it in code.');
-      }
-    }
-
-    function onBackButtonClick() {
-      playHaptic();
-      if (shopLevel > 1) {
-        shopLevel--;
-        updateShopLevels();
-        if (shopLevel === 1) backButton.hide();
-      }
-    }
-
-    function switchReferralTab(type) {
-      referralType = type;
-      document.querySelectorAll('.referral-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.type === type));
-      document.querySelectorAll('.referral-content').forEach(content => content.classList.toggle('active', content.id === `referral-content-${type}`));
-      playHaptic();
-    }
-
-    function inviteFriends() {
-      playHaptic();
-      const link = `https://t.me/share/url?url=https://t.me/tezstarbot?start=${user.id}`;
-      tg.openTelegramLink(link);
-    }
-
-    function renderFriends() {
-      const listStars = document.getElementById('friends-list-stars');
-      const listPremium = document.getElementById('friends-list-premium');
-      // Mock friends list
-      const friends = state.friends;
-      listStars.innerHTML = friends.map(f => `<div class="friend-item"><span>${f.name}</span><span>+5 ⭐</span></div>`).join('');
-      listPremium.innerHTML = friends.map(f => `<div class="friend-item"><span>${f.name}</span><span>+15 ⭐</span></div>`).join('');
-    }
-
-    function updateWallet() {
-      // Update deposits and expenses
-    }
-
-    function filterHistory(filter) {
-      document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.filter === filter));
-      renderHistory(filter);
-      playHaptic();
-    }
-
-    function renderHistory(filter = 'all') {
-      const list = document.getElementById('history-list');
+    function renderHistory() {
+      const list = document.getElementById('historyList');
       list.innerHTML = '';
-      const filtered = filter === 'all' ? state.history : state.history.filter(h => h.type === filter);
+      const filtered = state.history.filter(item => state.historyFilter === 'all' ? true : item.type === state.historyFilter);
+      if (!filtered.length) {
+        const empty = document.createElement('div');
+        empty.className = 'card';
+        empty.innerHTML = '<p>No history yet.</p>';
+        list.appendChild(empty);
+        return;
+      }
       filtered.forEach(item => {
         const card = document.createElement('div');
         card.className = 'history-card';
-        card.innerHTML = `<p class="product-name">${item.product}</p><p class="card-text">${item.method.toUpperCase()} · ${new Date(item.time).toLocaleString('uz-UZ')}</p><p class="product-price">${formatUZS(item.price)}</p><span class="status-badge status-${item.status}">${item.status}</span>`;
+        const statusClass = item.status === 'completed' ? 'status-completed' : item.status === 'pending' ? 'status-pending' : 'status-cancelled';
+        card.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+            <div><h3>${item.title}</h3><p>${item.method} · ${item.time}</p></div>
+            <div style="text-align:right;"><span style="font-weight:700;">${formatUZS(item.amount)}</span><div class="status-chip ${statusClass}">${capitalize(item.status)}</div></div>
+          </div>`;
         list.appendChild(card);
       });
     }
 
-    function openSettingsModal() {
-      playHaptic();
-      document.getElementById('settings-modal').classList.add('active');
+    function renderInvitedUsers() {
+      const container = document.getElementById('invitedUsers');
+      container.innerHTML = '';
+      state.invitedUsers.forEach(user => {
+        const item = document.createElement('div');
+        item.className = 'invite-item';
+        item.innerHTML = `<h3>${user.name}</h3><p>${user.reward}</p>`;
+        container.appendChild(item);
+      });
     }
 
-    function closeSettingsModal() {
-      playHaptic();
-      document.getElementById('settings-modal').classList.remove('active');
-      persistState();
+    function copyReferralLink() {
+      const link = document.getElementById('referralLink').textContent;
+      navigator.clipboard.writeText(link).then(() => showToast('Link copied to clipboard')); 
+      haptic();
     }
 
-    function openSupport(link) {
-      playHaptic();
-      tg.openTelegramLink(`https://t.me/${link.slice(1)}`);
+    function inviteFriends() {
+      if (tg.switchInlineQuery) {
+        tg.switchInlineQuery(`Invite to Tez Star`);
+      } else {
+        tg.openLink(`https://t.me/share/url?url=https://t.me/tezstarbot?start=${user.id}`);
+      }
+      haptic();
     }
 
-    function formatUZS(amount) {
-      return `${amount.toLocaleString('uz-UZ')} UZS`;
+    function setWalletTab(tab) {
+      state.walletTab = tab;
+      document.getElementById('depTab').classList.toggle('active', tab === 'deposits');
+      document.getElementById('expTab').classList.toggle('active', tab === 'expenses');
+      renderWallet();
+      haptic();
     }
 
-    function showToast(message, type = '') {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.toggle('error', type === 'error');
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2400);
+    function renderWallet() {
+      document.getElementById('walletBalance').textContent = formatUZS(state.wallet.balance);
+      const list = document.getElementById('walletList');
+      list.innerHTML = '';
+      const items = state.wallet[state.walletTab];
+      if (!items.length) {
+        const empty = document.createElement('div');
+        empty.className = 'wallet-panel';
+        empty.innerHTML = '<p>No items yet.</p>';
+        list.appendChild(empty);
+        return;
+      }
+      items.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'wallet-panel';
+        row.innerHTML = `<h3>${item.title}</h3><p>${formatUZS(item.amount)} · ${item.time}</p>`;
+        list.appendChild(row);
+      });
     }
 
-    function playHaptic() { tg.HapticFeedback?.impactOccurred('medium'); }
-
-    function persistState() {
-      localStorage.setItem('tezstar_balance', state.balanceUZS);
-      localStorage.setItem('tezstar_stars', state.starBalance);
-      localStorage.setItem('tezstar_history', JSON.stringify(state.history));
-      localStorage.setItem('tezstar_friends', JSON.stringify(state.friends));
-      localStorage.setItem('tezstar_language', state.language);
-      localStorage.setItem('tezstar_payment', state.defaultPayment);
+    function setRecipientAndContinue() {
+      if (state.recipientType === 'gift' && !state.giftUsername) {
+        showToast('Enter friend username to continue', true);
+        return;
+      }
+      setShopStep(3);
     }
+
+    function onMainButtonClick() {
+      if (state.currentView !== 'shop' || state.shopStep !== 3 || !state.selectedPackage) return;
+      const amount = state.selectedPackage.price;
+      openPaymentLink(state.selectedPayment, amount);
+      addHistoryItem();
+      haptic();
+    }
+
+    function openPaymentLink(method, amount) {
+      const scheme = PAYMENT_SCHEMES[method]?.replace('AMOUNT', amount) || PAYMENT_SCHEMES.payme.replace('AMOUNT', amount);
+      if (scheme.includes('YOUR_')) {
+        tg.openLink('https://t.me/tezstarbot');
+        showToast('Payment scheme needs account details');
+        return;
+      }
+      tg.openLink(scheme);
+    }
+
+    function addHistoryItem() {
+      const type = state.selectedPackage.type;
+      state.history.unshift({
+        type,
+        title: state.selectedPackage.label,
+        method: capitalize(state.selectedPayment),
+        amount: state.selectedPackage.price,
+        status: 'pending',
+        time: new Date().toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+      });
+      renderHistory();
+    }
+
+    function updateMainButton() {
+      const shouldShow = state.currentView === 'shop' && state.shopStep === 3 && state.selectedPackage && (state.recipientType === 'self' || state.giftUsername.length > 0);
+      if (shouldShow) {
+        mainButton.setText(`Pay ${formatUZS(state.selectedPackage.price)}`);
+        mainButton.show();
+        mainButton.enable();
+      } else {
+        mainButton.hide();
+      }
+    }
+
+    function onBackPressed() {
+      if (state.currentView === 'shop' && state.shopStep > 1) {
+        setShopStep(state.shopStep - 1);
+      }
+      haptic();
+    }
+
+    function openSettings() {
+      document.getElementById('settingsDrawer').classList.add('active');
+      document.getElementById('drawerBackdrop').classList.add('active');
+      haptic();
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsDrawer').classList.remove('active');
+      document.getElementById('drawerBackdrop').classList.remove('active');
+      haptic();
+    }
+
+    function updateSettings() {
+      state.settings.language = document.getElementById('languageSelect').value;
+      state.settings.payment = document.getElementById('paymentSelect').value;
+      state.selectedPayment = state.settings.payment;
+    }
+
+    function openSupport(target) {
+      tg.openLink(`https://t.me/${target.replace('@','')}`);
+      haptic();
+    }
+
+    function formatPaynetId(id) {
+      return String(id).padStart(12, '0').replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 · $2 · $3 · $4');
+    }
+
+    function capitalize(text) {
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    document.getElementById('profileButton').onclick = openSettings;
+    document.getElementById('giftUsername').oninput = updateGiftUsername;
+    document.getElementById('customStars').oninput = updateCustomAmount;
+    document.getElementById('shopStep2').addEventListener('click', event => {
+      if (event.target.closest('.pill')) return;
+    });
+    window.selectCategory = selectCategory;
+    window.switchView = switchView;
+    window.setRecipient = type => { setRecipient(type); if (type === 'self') setShopStep(3); };
+    window.updateGiftUsername = updateGiftUsername;
+    window.updateCustomAmount = updateCustomAmount;
+    window.copyReferralLink = copyReferralLink;
+    window.inviteFriends = inviteFriends;
+    window.setWalletTab = setWalletTab;
+    window.setHistoryFilter = setHistoryFilter;
+    window.onMainButtonClick = onMainButtonClick;
+    window.setRecipientAndContinue = setRecipientAndContinue;
+    window.openSupport = openSupport;
 
     init();
   </script>
