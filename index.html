@@ -47,7 +47,7 @@
     .product-card.active { border-color: var(--accent); box-shadow: inset 0 0 0 1px rgba(34,197,94,0.18); }
     .product-name { margin: 0; font-weight: 700; }
     .product-price { margin: 10px 0 0; color: var(--accent); font-weight: 700; }
-    .method-card { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .method-card { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px; border-radius: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; transition: border-color 0.18s ease; }
     .method-card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
     .switch-row { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; padding: 16px; border-radius: 22px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); }
     .switch-label { margin: 0; font-weight: 700; }
@@ -58,15 +58,19 @@
     .input-group { margin-top: 16px; display: grid; gap: 10px; }
     .input-group label { color: var(--muted); font-size: 0.95rem; }
     .input-group input { width: 100%; border-radius: 18px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.05); padding: 14px 16px; color: var(--text); }
+    .input-group select { width: 100%; border-radius: 18px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.05); padding: 14px 16px; color: var(--text); }
     .pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: var(--muted); }
     .button { width: 100%; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 14px 18px; background: rgba(34,197,94,0.14); color: var(--accent); font-weight: 700; cursor: pointer; transition: transform 0.18s ease, background 0.18s ease; }
     .button:hover { transform: translateY(-1px); background: rgba(34,197,94,0.2); }
+    .button.secondary { background: rgba(255,255,255,0.08); color: var(--text); }
+    .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 18px; margin-top: 18px; }
     .card-text { margin: 10px 0 0; color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
     .bottom-nav { position: fixed; inset: auto 0 0; z-index: 50; padding: 10px 12px 18px; background: rgba(4,7,15,0.96); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.08); display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
     .nav-button { border: none; border-radius: 18px; background: transparent; color: var(--muted); display: grid; place-items: center; gap: 6px; padding: 12px 8px; font-size: 0.82rem; transition: background 0.18s ease, color 0.18s ease; }
     .nav-button.active { background: rgba(34,197,94,0.16); color: var(--accent); }
     .toast { position: fixed; left: 50%; bottom: 100px; transform: translateX(-50%); z-index: 60; padding: 14px 18px; border-radius: 18px; background: rgba(12,17,30,0.96); color: #fff; box-shadow: 0 24px 70px rgba(0,0,0,0.3); opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
     .toast.show { opacity: 1; }
+    .toast.error { background: var(--error); }
     .loader { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; background: rgba(4,7,15,0.97); }
     .duck-loader { width: 110px; height: 110px; position: relative; }
     .duck-body { width: 100%; height: 100%; border-radius: 28px; background: linear-gradient(135deg, #facc15, #fb7185); position: relative; box-shadow: 0 24px 50px rgba(0,0,0,0.28); }
@@ -74,6 +78,28 @@
     .duck-beak { width: 20px; height: 18px; border-radius: 10px 10px 12px 12px; background: #f97316; position: absolute; top: 46px; left: 42px; }
     .duck-ring { position: absolute; inset: 0; border-radius: 30px; border: 4px solid rgba(255,255,255,0.18); animation: spin 1.4s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .modal { position: fixed; inset: 0; z-index: 80; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
+    .modal.active { display: flex; }
+    .modal-content { background: var(--bg); border-radius: 28px; padding: 24px; max-width: 90%; width: 400px; border: 1px solid var(--border); box-shadow: var(--shadow); position: relative; }
+    .modal-title { margin: 0 0 18px; font-size: 1.2rem; }
+    .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; }
+    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 700; }
+    .status-pending { background: var(--warning); color: #000; }
+    .status-completed { background: var(--success); color: #fff; }
+    .status-cancelled { background: var(--error); color: #fff; }
+    .filter-tabs { display: flex; gap: 10px; margin-bottom: 18px; }
+    .filter-tab { padding: 8px 16px; border-radius: 18px; background: rgba(255,255,255,0.05); color: var(--muted); cursor: pointer; transition: background 0.18s ease, color 0.18s ease; }
+    .filter-tab.active { background: var(--accent); color: var(--accent-text); }
+    .paynet-image { width: 100%; height: 120px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 18px; display: grid; place-items: center; color: #000; font-weight: 700; margin-bottom: 18px; }
+    .referral-tabs { display: flex; gap: 10px; margin-bottom: 18px; }
+    .referral-tab { flex: 1; padding: 12px; border-radius: 18px; background: rgba(255,255,255,0.05); color: var(--muted); text-align: center; cursor: pointer; transition: background 0.18s ease, color 0.18s ease; }
+    .referral-tab.active { background: var(--accent); color: var(--accent-text); }
+    .referral-content { display: none; }
+    .referral-content.active { display: block; }
+    .friends-list { margin-top: 18px; }
+    .friend-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-radius: 18px; background: rgba(255,255,255,0.05); margin-bottom: 10px; }
+    .level { display: none; }
+    .level.active { display: block; }
   </style>
 </head>
 <body>
@@ -87,146 +113,189 @@
   </div>
 
   <div class="app" id="app">
-    <section class="card top-card" aria-label="Profile summary">
-      <div class="avatar" id="user-avatar"><span>⭐</span></div>
-      <div class="user-info">
-        <h1 id="user-greeting">Hello, Star User</h1>
-        <p id="user-handle">@guest</p>
-        <div class="badge-row">
-          <span class="badge">Fixed 5 Stars/referral</span>
-          <span class="badge">100 Stars = 20,000 UZS</span>
-        </div>
-      </div>
-    </section>
+    <div class="header">
+      <div class="profile-icon" onclick="openSettingsModal()">👤</div>
+      <h1>Tez Star</h1>
+      <div class="profile-icon" onclick="openSettingsModal()">⚙️</div>
+    </div>
 
     <div class="tabs" role="tablist" aria-label="Main sections">
-      <button class="tab-button active" data-section="stars" onclick="activateSection('stars')">⭐<span>Stars</span></button>
+      <button class="tab-button active" data-section="shop" onclick="activateSection('shop')">🛒<span>Shop</span></button>
       <button class="tab-button" data-section="referral" onclick="activateSection('referral')">👥<span>Referral</span></button>
       <button class="tab-button" data-section="wallet" onclick="activateSection('wallet')">💰<span>Wallet</span></button>
       <button class="tab-button" data-section="history" onclick="activateSection('history')">🕒<span>History</span></button>
     </div>
 
-    <section class="panel active" id="section-stars" role="tabpanel">
-      <p class="section-title">Buy Stars</p>
-      <p class="section-subtitle">Choose a package, or type your custom amount. Then use Payme, Click or Alif to pay instantly.</p>
-      <div class="grid-2" id="package-grid"></div>
-
-      <div class="card" style="margin-top:18px;">
-        <div class="section-title">Custom Amount</div>
-        <p class="section-subtitle">Minimum 50 Stars, automatic UZS pricing.</p>
-        <div class="input-group">
-          <label for="custom-stars">Stars</label>
-          <input id="custom-stars" type="number" min="50" value="100" aria-label="Custom stars amount" />
-          <div class="pill" id="custom-price">100 Stars — 20,000 UZS</div>
+    <!-- Shop Section -->
+    <section class="panel active" id="section-shop" role="tabpanel">
+      <div class="level active" id="shop-level-1">
+        <p class="section-title">Choose Category</p>
+        <div class="grid-3">
+          <button class="product-card" onclick="goToShopLevel(2, 'stars')">
+            <p class="product-name">⭐ Stars</p>
+            <p class="card-text">Buy Telegram Stars</p>
+          </button>
+          <button class="product-card" onclick="goToShopLevel(2, 'premium')">
+            <p class="product-name">💎 Premium</p>
+            <p class="card-text">Telegram Premium</p>
+          </button>
+          <button class="product-card" onclick="goToShopLevel(2, 'gifts')">
+            <p class="product-name">🎁 Gifts</p>
+            <p class="card-text">Send Gifts</p>
+          </button>
         </div>
       </div>
 
-      <div class="card" style="margin-top:18px;">
-        <div class="switch-row">
-          <div>
-            <p class="switch-label">Gift to friend</p>
-            <p class="section-subtitle" style="margin-top:6px;">Turn off for yourself, on for gifting.</p>
-          </div>
-          <label class="toggle">
-            <input type="checkbox" id="gift-toggle" aria-label="Gift to friend toggle" />
-            <span class="thumb"></span>
-          </label>
+      <div class="level" id="shop-level-2">
+        <p class="section-title">For Whom?</p>
+        <div class="grid-2">
+          <button class="product-card" onclick="selectRecipient('myself')">
+            <p class="product-name">For Myself</p>
+            <p class="card-text">@{{user.username || 'username'}}</p>
+          </button>
+          <button class="product-card" onclick="selectRecipient('friend')">
+            <p class="product-name">For Friend</p>
+            <p class="card-text">Enter username</p>
+          </button>
         </div>
-        <div class="input-group" id="gift-username-group" style="display:none;">
-          <label for="gift-username">Friend's @username</label>
-          <input id="gift-username" type="text" placeholder="@friend_username" />
+      </div>
+
+      <div class="level" id="shop-level-3">
+        <p class="section-title" id="package-title">Select Package</p>
+        <div class="input-group" id="custom-input-group" style="display: none;">
+          <label for="custom-amount">Custom Amount</label>
+          <input id="custom-amount" type="number" min="50" placeholder="Min 50" />
         </div>
+        <div class="grid-2" id="package-grid"></div>
+        <button class="button secondary" onclick="goToShopLevel(2)">Back</button>
       </div>
     </section>
 
+    <!-- Referral Section -->
     <section class="panel" id="section-referral" role="tabpanel">
-      <p class="section-title">Referral Program</p>
-      <p class="section-subtitle">Share your link and earn 5 Stars for each successful referral purchase.</p>
-      <div class="card" style="margin-top:18px;">
-        <p class="section-title">Your referral link</p>
-        <p class="section-subtitle" id="referral-link">Loading your link...</p>
-        <button class="button" id="copy-link">Copy Link</button>
+      <div class="referral-tabs">
+        <button class="referral-tab active" data-type="stars" onclick="switchReferralTab('stars')">⭐ Stars</button>
+        <button class="referral-tab" data-type="premium" onclick="switchReferralTab('premium')">💎 Premium</button>
+      </div>
+      <div id="referral-content-stars" class="referral-content active">
+        <p class="section-title">Invite Friends for Stars</p>
+        <p class="section-subtitle">Earn 5 Stars for each 100-Star purchase by your referrals.</p>
+        <button class="button" onclick="inviteFriends()">Invite Friends</button>
+        <div class="friends-list" id="friends-list-stars"></div>
+      </div>
+      <div id="referral-content-premium" class="referral-content">
+        <p class="section-title">Invite Friends for Premium</p>
+        <p class="section-subtitle">Earn 15 Stars for each Premium purchase by your referrals.</p>
+        <button class="button" onclick="inviteFriends()">Invite Friends</button>
+        <div class="friends-list" id="friends-list-premium"></div>
       </div>
     </section>
 
+    <!-- Wallet Section -->
     <section class="panel" id="section-wallet" role="tabpanel">
-      <p class="section-title">Wallet</p>
-      <p class="section-subtitle">Built-in balance and star reserve for fast checkout.</p>
-      <div class="grid-2" style="margin-top:18px;">
-        <div class="product-card">
-          <p class="product-name">Available balance</p>
-          <p class="product-price" id="wallet-balance">0 UZS</p>
-        </div>
-        <div class="product-card">
-          <p class="product-name">Star balance</p>
-          <p class="product-price" id="star-balance">0 ⭐</p>
-        </div>
+      <p class="section-title">Top-up Wallet</p>
+      <div class="paynet-image">Paynet Terminal</div>
+      <p class="section-subtitle">Your Paynet ID: <strong id="paynet-id">{{user.id}}</strong></p>
+      <div class="grid-2">
+        <button class="method-card" onclick="selectPaymentMethod('payme')">Payme</button>
+        <button class="method-card" onclick="selectPaymentMethod('click')">Click</button>
+        <button class="method-card" onclick="selectPaymentMethod('paynet')">Paynet</button>
+        <button class="method-card" onclick="selectPaymentMethod('alif')">Alif</button>
       </div>
       <div class="card" style="margin-top:18px;">
-        <p class="section-title">Quick top-up</p>
-        <p class="section-subtitle">Use Payme or Click, then confirm in bot.</p>
-        <div class="grid-2" style="margin-top:12px;">
-          <button class="method-card" onclick="selectPaymentMethod('payme', event)">Payme</button>
-          <button class="method-card" onclick="selectPaymentMethod('click', event)">Click</button>
-          <button class="method-card" onclick="selectPaymentMethod('alif', event)">Alif</button>
-        </div>
-        <button class="button" style="margin-top:14px;" onclick="selectPaymentMethod('wallet', event)">Use Wallet</button>
+        <p class="section-title">Deposits</p>
+        <div id="deposits-list"></div>
+      </div>
+      <div class="card" style="margin-top:18px;">
+        <p class="section-title">Expenses</p>
+        <div id="expenses-list"></div>
       </div>
     </section>
 
+    <!-- History Section -->
     <section class="panel" id="section-history" role="tabpanel">
-      <p class="section-title">Order History</p>
-      <p class="section-subtitle">Saved locally for faster reopen and history preview.</p>
-      <div id="history-list" style="margin-top:18px; display:grid; gap:12px;"></div>
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all" onclick="filterHistory('all')">All</button>
+        <button class="filter-tab" data-filter="stars" onclick="filterHistory('stars')">Stars</button>
+        <button class="filter-tab" data-filter="premium" onclick="filterHistory('premium')">Premium</button>
+        <button class="filter-tab" data-filter="gifts" onclick="filterHistory('gifts')">Gifts</button>
+      </div>
+      <div id="history-list"></div>
     </section>
   </div>
 
   <div class="bottom-nav" role="navigation" aria-label="Bottom navigation">
-    <button class="nav-button active" data-section="stars" onclick="activateSection('stars')">⭐<span>Stars</span></button>
+    <button class="nav-button active" data-section="shop" onclick="activateSection('shop')">🛒<span>Shop</span></button>
     <button class="nav-button" data-section="referral" onclick="activateSection('referral')">👥<span>Referral</span></button>
     <button class="nav-button" data-section="wallet" onclick="activateSection('wallet')">💰<span>Wallet</span></button>
     <button class="nav-button" data-section="history" onclick="activateSection('history')">🕒<span>History</span></button>
   </div>
 
-  <div class="toast" id="toast">Link Copied!</div>
+  <!-- Settings Modal -->
+  <div class="modal" id="settings-modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeSettingsModal()">×</button>
+      <h2 class="modal-title">Settings</h2>
+      <div class="input-group">
+        <label>Language</label>
+        <select id="language-select">
+          <option value="en">English</option>
+          <option value="uz" selected>Uzbek</option>
+          <option value="ru">Russian</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Default Payment</label>
+        <select id="payment-select">
+          <option value="payme" selected>Payme</option>
+          <option value="click">Click</option>
+          <option value="paynet">Paynet</option>
+          <option value="alif">Alif</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Support</label>
+        <button class="button secondary" onclick="openSupport('@YourSupportUser')">Contact Support</button>
+        <button class="button secondary" onclick="openSupport('@YourChannel')">Join Channel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Message</div>
 
   <script>
     const tg = window.Telegram.WebApp;
-    const user = tg.initDataUnsafe?.user || {};
-    const profile = {
-      name: user.first_name ? `${user.first_name}${user.last_name ? ' ' + user.last_name : ''}` : 'Star User',
-      handle: user.username ? `@${user.username}` : '@guest',
-      avatar: user.photo_url || ''
-    };
+    const user = tg.initDataUnsafe?.user || { id: '123456789', username: 'guest' };
+    const backButton = tg.BackButton;
 
     const PAYMENT_SCHEMES = {
       payme: { app: 'payme://pay?receiver=YOUR_PAYME_ACCOUNT&amount=AMOUNT', fallback: 'https://payme.uz' },
       click: { app: 'click://pay?receiver=YOUR_CLICK_ACCOUNT&amount=AMOUNT', fallback: 'https://click.uz' },
+      paynet: { app: 'paynet://pay?receiver=YOUR_PAYNET_ACCOUNT&amount=AMOUNT', fallback: 'https://paynet.uz' },
       alif: { app: 'alifpay://transfer?receiver=YOUR_ALIF_ACCOUNT&amount=AMOUNT', fallback: 'https://alifpay.uz' }
     };
 
-    const packages = [
-      { key: 'stars_100', label: '100 Stars', price: 20000 },
-      { key: 'stars_150', label: '150 Stars', price: 30000 },
-      { key: 'stars_250', label: '250 Stars', price: 50000 },
-      { key: 'stars_350', label: '350 Stars', price: 70000 },
-      { key: 'stars_500', label: '500 Stars', price: 100000 },
-      { key: 'stars_750', label: '750 Stars', price: 150000 },
-      { key: 'stars_1000', label: '1000 Stars', price: 200000 },
-      { key: 'stars_1500', label: '1500 Stars', price: 300000 },
-      { key: 'stars_2500', label: '2500 Stars', price: 500000 },
-      { key: 'stars_5000', label: '5000 Stars', price: 1000000 },
-      { key: 'stars_10000', label: '10000 Stars', price: 2000000 }
+    const starPackages = [50, 100, 150, 250, 350, 500, 750, 1000, 1500, 2500, 5000, 10000];
+    const premiumPackages = [
+      { label: '3 Months', price: 155999, discount: '-20%' },
+      { label: '6 Months', price: 215999, discount: '-37%' },
+      { label: '1 Year', price: 385999, discount: '-42%' }
     ];
 
-    let selectedPackage = null;
+    let currentSection = 'shop';
+    let shopLevel = 1;
+    let selectedCategory = '';
+    let selectedRecipient = '';
     let selectedMethod = 'payme';
-    let giftingFriend = false;
+    let referralType = 'stars';
 
     const state = {
       balanceUZS: Number(localStorage.getItem('tezstar_balance') || 0),
       starBalance: Number(localStorage.getItem('tezstar_stars') || 0),
-      history: JSON.parse(localStorage.getItem('tezstar_history') || '[]')
+      history: JSON.parse(localStorage.getItem('tezstar_history') || '[{"product":"100 Stars","price":20000,"method":"payme","time":"2024-01-01T10:00:00Z","status":"completed","type":"stars"}]'),
+      friends: JSON.parse(localStorage.getItem('tezstar_friends') || '[{"name":"Friend1"}]'),
+      language: localStorage.getItem('tezstar_language') || 'uz',
+      defaultPayment: localStorage.getItem('tezstar_payment') || 'payme'
     };
 
     const mainButton = tg.MainButton;
@@ -235,19 +304,20 @@
       renderUser();
       renderPackages();
       renderHistory();
+      renderFriends();
       updateWallet();
-      updateCustomPrice();
-      updateReferralLink();
-      activateSection('stars');
+      activateSection('shop');
       showLoader(false);
       tg.ready();
       tg.expand();
       mainButton.setText('Choose package');
       mainButton.hide();
       mainButton.onClick(onMainButtonClick);
-      document.getElementById('gift-toggle').addEventListener('change', onGiftToggle);
-      document.getElementById('custom-stars').addEventListener('input', updateCustomPrice);
-      document.getElementById('copy-link').addEventListener('click', copyReferralLink);
+      backButton.onClick(onBackButtonClick);
+      document.getElementById('custom-amount').addEventListener('input', validateCustomAmount);
+      document.getElementById('language-select').value = state.language;
+      document.getElementById('payment-select').value = state.defaultPayment;
+      document.getElementById('paynet-id').textContent = user.id;
     }
 
     function showLoader(show) {
@@ -255,78 +325,110 @@
     }
 
     function renderUser() {
-      const avatar = document.getElementById('user-avatar');
-      if (profile.avatar) { avatar.innerHTML = `<img src="${profile.avatar}" alt="User avatar" />`; }
-      document.getElementById('user-greeting').textContent = `Hello, ${profile.name}`;
-      document.getElementById('user-handle').textContent = profile.handle;
+      // Update profile if needed
     }
 
     function activateSection(section) {
+      currentSection = section;
       document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === `section-${section}`));
-      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.toggle('active', btn.dataset.section === section));
-      document.querySelectorAll('.nav-button').forEach(btn => btn.classList.toggle('active', btn.dataset.section === section));
+      document.querySelectorAll('.tab-button, .nav-button').forEach(btn => btn.classList.toggle('active', btn.dataset.section === section));
       playHaptic();
-      if (section === 'referral') updateReferralLink();
+      backButton.hide();
+      shopLevel = 1;
+      updateShopLevels();
     }
 
-    function renderPackages() {
-      const grid = document.getElementById('package-grid');
-      grid.innerHTML = '';
-      packages.forEach(pkg => {
-        const card = document.createElement('button');
-        card.type = 'button';
-        card.className = 'product-card';
-        card.innerHTML = `<p class="product-name">${pkg.label}</p><p class="product-price">${formatUZS(pkg.price)}</p>`;
-        card.addEventListener('click', () => selectPackage(pkg, card));
-        grid.appendChild(card);
-      });
-    }
-
-    function selectPackage(pkg, card) {
+    function goToShopLevel(level, category = '') {
       playHaptic();
-      selectedPackage = pkg;
-      document.querySelectorAll('.product-card').forEach(item => item.classList.remove('active'));
-      card.classList.add('active');
-      updateMainButton();
+      shopLevel = level;
+      selectedCategory = category;
+      updateShopLevels();
+      if (level > 1) backButton.show();
     }
 
-    function updateCustomPrice() {
-      const input = document.getElementById('custom-stars');
-      let count = Number(input.value) || 50;
-      if (count < 50) count = 50;
-      input.value = count;
-      const price = count * 200;
-      document.getElementById('custom-price').textContent = `${count.toLocaleString('uz-UZ')} Stars — ${formatUZS(price)}`;
-      selectedPackage = { key: 'stars_custom', label: `${count} Stars`, price, count };
-      document.querySelectorAll('.product-card').forEach(item => item.classList.remove('active'));
-      updateMainButton();
-    }
-
-    function prepareCustomPurchase() {
-      playHaptic();
-      updateCustomPrice();
-      if (selectedPackage) {
-        showToast(`${selectedPackage.label} tayyor. Endi to‘lovni yakunlang.`);
+    function updateShopLevels() {
+      document.querySelectorAll('.level').forEach(level => level.classList.remove('active'));
+      document.getElementById(`shop-level-${shopLevel}`).classList.add('active');
+      if (shopLevel === 3) {
+        renderPackageGrid();
       }
     }
 
-    function onGiftToggle(event) {
-      giftingFriend = event.target.checked;
-      document.getElementById('gift-username-group').style.display = giftingFriend ? 'grid' : 'none';
+    function selectRecipient(recipient) {
       playHaptic();
+      selectedRecipient = recipient;
+      goToShopLevel(3);
     }
 
-    function selectPaymentMethod(method, event) {
+    function renderPackageGrid() {
+      const grid = document.getElementById('package-grid');
+      const title = document.getElementById('package-title');
+      const customGroup = document.getElementById('custom-input-group');
+      grid.innerHTML = '';
+
+      if (selectedCategory === 'stars') {
+        title.textContent = 'Select Stars Package';
+        customGroup.style.display = 'grid';
+        starPackages.forEach(count => {
+          const price = Math.floor(count * 199.99);
+          const card = document.createElement('button');
+          card.type = 'button';
+          card.className = 'product-card';
+          card.innerHTML = `<p class="product-name">${count.toLocaleString('uz-UZ')} Stars</p><p class="product-price">${formatUZS(price)}</p><span class="badge">-20%</span>`;
+          card.addEventListener('click', () => selectPackage({ type: 'stars', count, price }));
+          grid.appendChild(card);
+        });
+      } else if (selectedCategory === 'premium') {
+        title.textContent = 'Select Premium Package';
+        customGroup.style.display = 'none';
+        premiumPackages.forEach(pkg => {
+          const card = document.createElement('button');
+          card.type = 'button';
+          card.className = 'product-card';
+          card.innerHTML = `<p class="product-name">${pkg.label}</p><p class="product-price">${formatUZS(pkg.price)}</p><span class="badge">${pkg.discount}</span>`;
+          card.addEventListener('click', () => selectPackage({ type: 'premium', ...pkg }));
+          grid.appendChild(card);
+        });
+      } else if (selectedCategory === 'gifts') {
+        title.textContent = 'Select Gift';
+        customGroup.style.display = 'none';
+        // Add gift options here
+      }
+    }
+
+    function selectPackage(pkg) {
+      playHaptic();
+      selectedPackage = pkg;
+      document.querySelectorAll('.product-card').forEach(item => item.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      updateMainButton();
+    }
+
+    function validateCustomAmount() {
+      const input = document.getElementById('custom-amount');
+      const value = Number(input.value);
+      if (value < 50) {
+        input.classList.add('error');
+        showToast('Minimum 50 Stars required', 'error');
+      } else {
+        input.classList.remove('error');
+        const price = Math.floor(value * 199.99);
+        selectedPackage = { type: 'stars', count: value, price };
+        updateMainButton();
+      }
+    }
+
+    function selectPaymentMethod(method) {
       selectedMethod = method;
       document.querySelectorAll('.method-card').forEach(card => card.style.borderColor = 'rgba(255,255,255,0.08)');
-      if (event?.currentTarget) event.currentTarget.style.borderColor = 'var(--accent)';
+      event.currentTarget.style.borderColor = 'var(--accent)';
       updateMainButton();
       playHaptic();
     }
 
     function updateMainButton() {
       if (!selectedPackage) { mainButton.hide(); return; }
-      const text = selectedMethod === 'wallet' ? `Pay ${formatUZS(selectedPackage.price)} from Wallet` : `Pay ${formatUZS(selectedPackage.price)}`;
+      const text = `Pay ${formatUZS(selectedPackage.price)}`;
       mainButton.setText(text);
       mainButton.show();
       mainButton.enable();
@@ -335,9 +437,6 @@
     function onMainButtonClick() {
       playHaptic();
       if (!selectedPackage) return;
-      const giftName = giftingFriend ? (document.getElementById('gift-username').value.trim() || '@friend') : '@self';
-      saveHistory({ product: selectedPackage.label, price: selectedPackage.price, method: selectedMethod, gift: giftName, time: new Date().toISOString() });
-      if (selectedMethod === 'wallet') { return confirmWalletPayment(); }
       openPaymentApp(selectedMethod, selectedPackage.price);
     }
 
@@ -353,72 +452,83 @@
       }
     }
 
-    function confirmWalletPayment() {
-      if (state.balanceUZS < selectedPackage.price) {
-        showToast('Wallet balans yetarli emas. Boshqa to‘lov tanlang.');
-        return;
+    function onBackButtonClick() {
+      playHaptic();
+      if (shopLevel > 1) {
+        shopLevel--;
+        updateShopLevels();
+        if (shopLevel === 1) backButton.hide();
       }
-      state.balanceUZS -= selectedPackage.price;
-      state.starBalance += Number(selectedPackage.label.match(/\d+/)?.[0] || 0);
-      persistState();
-      updateWallet();
-      showToast('Wallet orqali to‘lov bajarildi. Stars qo‘shildi!');
     }
 
-    function requestWalletTopup() {
+    function switchReferralTab(type) {
+      referralType = type;
+      document.querySelectorAll('.referral-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.type === type));
+      document.querySelectorAll('.referral-content').forEach(content => content.classList.toggle('active', content.id === `referral-content-${type}`));
       playHaptic();
-      openPaymentApp('payme', 50000);
-      showToast('Payme va Click uchun appda to‘lovni yakunlang.');
+    }
+
+    function inviteFriends() {
+      playHaptic();
+      const link = `https://t.me/share/url?url=https://t.me/tezstarbot?start=${user.id}`;
+      tg.openTelegramLink(link);
+    }
+
+    function renderFriends() {
+      const listStars = document.getElementById('friends-list-stars');
+      const listPremium = document.getElementById('friends-list-premium');
+      // Mock friends list
+      const friends = state.friends;
+      listStars.innerHTML = friends.map(f => `<div class="friend-item"><span>${f.name}</span><span>+5 ⭐</span></div>`).join('');
+      listPremium.innerHTML = friends.map(f => `<div class="friend-item"><span>${f.name}</span><span>+15 ⭐</span></div>`).join('');
     }
 
     function updateWallet() {
-      document.getElementById('wallet-balance').textContent = formatUZS(state.balanceUZS);
-      document.getElementById('star-balance').textContent = `${state.starBalance.toLocaleString('uz-UZ')} ⭐`;
+      // Update deposits and expenses
     }
 
-    function updateReferralLink() {
-      const code = tg.initDataUnsafe?.query_id || 'REFERRAL_CODE_PLACEHOLDER';
-      const username = user.username ? `@${user.username}` : 'tezstar';
-      document.getElementById('referral-link').textContent = `https://t.me/${username}?start=${code}`;
+    function filterHistory(filter) {
+      document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.filter === filter));
+      renderHistory(filter);
+      playHaptic();
     }
 
-    function copyReferralLink() {
-      const text = document.getElementById('referral-link').textContent;
-      navigator.clipboard.writeText(text).then(() => {
-        showToast('Link Copied!');
-        playHaptic();
-      }).catch(() => showToast('Copy failed.'));
-    }
-
-    function saveHistory(entry) {
-      state.history.unshift(entry);
-      if (state.history.length > 12) state.history.pop();
-      localStorage.setItem('tezstar_history', JSON.stringify(state.history));
-      renderHistory();
-    }
-
-    function renderHistory() {
+    function renderHistory(filter = 'all') {
       const list = document.getElementById('history-list');
       list.innerHTML = '';
-      if (!state.history.length) {
-        list.innerHTML = `<div class="history-card"><p class="product-name">No orders yet</p><p class="card-text">Your purchase history will appear here.</p></div>`;
-        return;
-      }
-      state.history.forEach(item => {
+      const filtered = filter === 'all' ? state.history : state.history.filter(h => h.type === filter);
+      filtered.forEach(item => {
         const card = document.createElement('div');
         card.className = 'history-card';
-        card.innerHTML = `<p class="product-name">${item.product}</p><p class="card-text">${item.method.toUpperCase()} · ${new Date(item.time).toLocaleString('uz-UZ')}</p><p class="product-price">${formatUZS(item.price)}</p><p class="card-text">${item.gift === '@self' ? 'Self purchase' : 'Gift to ' + item.gift}</p>`;
+        card.innerHTML = `<p class="product-name">${item.product}</p><p class="card-text">${item.method.toUpperCase()} · ${new Date(item.time).toLocaleString('uz-UZ')}</p><p class="product-price">${formatUZS(item.price)}</p><span class="status-badge status-${item.status}">${item.status}</span>`;
         list.appendChild(card);
       });
+    }
+
+    function openSettingsModal() {
+      playHaptic();
+      document.getElementById('settings-modal').classList.add('active');
+    }
+
+    function closeSettingsModal() {
+      playHaptic();
+      document.getElementById('settings-modal').classList.remove('active');
+      persistState();
+    }
+
+    function openSupport(link) {
+      playHaptic();
+      tg.openTelegramLink(`https://t.me/${link.slice(1)}`);
     }
 
     function formatUZS(amount) {
       return `${amount.toLocaleString('uz-UZ')} UZS`;
     }
 
-    function showToast(message) {
+    function showToast(message, type = '') {
       const toast = document.getElementById('toast');
       toast.textContent = message;
+      toast.classList.toggle('error', type === 'error');
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 2400);
     }
@@ -428,6 +538,10 @@
     function persistState() {
       localStorage.setItem('tezstar_balance', state.balanceUZS);
       localStorage.setItem('tezstar_stars', state.starBalance);
+      localStorage.setItem('tezstar_history', JSON.stringify(state.history));
+      localStorage.setItem('tezstar_friends', JSON.stringify(state.friends));
+      localStorage.setItem('tezstar_language', state.language);
+      localStorage.setItem('tezstar_payment', state.defaultPayment);
     }
 
     init();
