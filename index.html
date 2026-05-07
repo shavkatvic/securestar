@@ -3,224 +3,117 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UzStar</title>
+  <title>UzStar Mini App</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
       color-scheme: dark;
-      color: var(--tg-theme-text-color, #f8fafc);
       background: var(--tg-theme-bg-color, #111827);
-      --surface: var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.08));
+      color: var(--tg-theme-text-color, #f8fafc);
+      --surface: rgba(255, 255, 255, 0.06);
       --surface-strong: rgba(255, 255, 255, 0.12);
-      --border: rgba(255, 255, 255, 0.12);
+      --border: rgba(255, 255, 255, 0.14);
       --accent: var(--tg-theme-button-color, #22c55e);
       --accent-text: var(--tg-theme-button-text-color, #ffffff);
       --muted: var(--tg-theme-hint-color, #94a3b8);
     }
 
-    * {
-      box-sizing: border-box;
-      font-family: Inter, system-ui, sans-serif;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.12), transparent 28%),
-                  var(--tg-theme-bg-color, #111827);
-      color: var(--tg-theme-text-color, #f8fafc);
-    }
-
-    .app {
-      max-width: 620px;
-      margin: 0 auto;
-      padding: 20px 18px 28px;
-    }
-
-    header {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding: 18px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      border-radius: 20px;
-      margin-bottom: 18px;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 1.75rem;
-      letter-spacing: -0.03em;
-    }
-
-    header p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 0.98rem;
-    }
-
-    .panel {
-      margin-top: 16px;
-      padding: 18px;
-      border-radius: 20px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    .card,
-    .method {
-      padding: 16px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      cursor: pointer;
-      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
-    }
-
-    .card:hover,
-    .method:hover {
-      transform: translateY(-2px);
-      border-color: var(--accent);
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .card strong,
-    .method strong {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 1rem;
-    }
-
-    .card span,
-    .method span {
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.5;
-    }
-
-    .button-row {
-      display: grid;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .button {
-      width: 100%;
-      border: none;
-      padding: 14px 16px;
-      font-size: 1rem;
-      border-radius: 14px;
-      background: var(--accent);
-      color: var(--accent-text);
-      cursor: pointer;
-      transition: transform 0.18s ease, opacity 0.18s ease;
-    }
-
-    .button:hover {
-      transform: translateY(-1px);
-      opacity: 0.95;
-    }
-
-    .button.secondary {
-      background: transparent;
-      color: var(--tg-theme-text-color, #f8fafc);
-      border: 1px solid var(--border);
-    }
-
-    .input-group {
-      display: grid;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    input[type='number'] {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--tg-theme-text-color, #f8fafc);
-      font-size: 1rem;
-    }
-
-    .note {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 0.94rem;
-      line-height: 1.6;
-    }
-
-    .status {
-      margin-top: 18px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: rgba(34, 197, 94, 0.12);
-      color: #d1fae5;
-      border: 1px solid rgba(34, 197, 94, 0.24);
-      font-size: 0.96rem;
-    }
-
-    footer {
-      margin-top: 22px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.6;
-    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif; }
+    body { background: radial-gradient(circle at top, rgba(56, 189, 248, 0.12), transparent 0%), var(--background); color: var(--tg-theme-text-color, #f8fafc); }
+    .app { max-width: 720px; margin: 0 auto; padding: 18px; }
+    header { padding: 18px; border: 1px solid var(--border); border-radius: 22px; background: var(--surface); }
+    header h1 { margin: 0 0 8px; font-size: 1.85rem; }
+    header p { margin: 0; color: var(--muted); line-height: 1.6; }
+    .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+    .tab { padding: 14px 12px; border-radius: 18px; border: 1px solid var(--border); background: var(--surface); text-align: center; cursor: pointer; transition: border-color 0.18s ease, transform 0.18s ease; }
+    .tab:hover { transform: translateY(-1px); }
+    .tab.active { border-color: var(--accent); background: var(--surface-strong); }
+    .tab strong { display: block; font-size: 1rem; margin-bottom: 6px; }
+    .tab span { color: var(--muted); font-size: 0.9rem; }
+    .panel { display: none; padding: 18px; border-radius: 22px; border: 1px solid var(--border); background: var(--surface); }
+    .panel.active { display: block; }
+    .package-grid, .method-grid { display: grid; gap: 12px; margin-top: 18px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    .card, .method { padding: 16px; border-radius: 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; transition: transform 0.18s ease, border-color 0.18s ease; }
+    .card:hover, .method:hover { transform: translateY(-2px); border-color: var(--accent); }
+    .card-title, .method-title { margin: 0 0 8px; font-size: 1rem; font-weight: 700; }
+    .card-text, .method-text { margin: 0; color: var(--muted); font-size: 0.94rem; line-height: 1.5; }
+    .input-group { display: grid; gap: 10px; margin-top: 18px; }
+    label { color: var(--muted); font-size: 0.95rem; }
+    input { width: 100%; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--border); background: rgba(255,255,255,0.06); color: inherit; font-size: 1rem; }
+    .button { width: 100%; border: none; border-radius: 16px; padding: 14px 16px; background: var(--accent); color: var(--accent-text); cursor: pointer; font-size: 1rem; transition: transform 0.18s ease, opacity 0.18s ease; }
+    .button:hover { transform: translateY(-1px); opacity: 0.95; }
+    .status { margin-top: 18px; padding: 14px 16px; border-radius: 18px; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.24); color: #d1fae5; font-size: 0.95rem; }
+    .note { margin-top: 16px; color: var(--muted); font-size: 0.94rem; line-height: 1.6; }
+    footer { margin-top: 20px; text-align: center; color: var(--muted); font-size: 0.92rem; }
   </style>
 </head>
 <body>
   <div class="app">
     <header>
       <h1>UzStar</h1>
-      <p>100 Stars = 20,000 UZS. Tayyor paketlar, maxsus buyurtma va Payme / Click ochilishi uchun Telegram mini appdan foydalaning.</p>
+      <p>100 Stars = 20,000 UZS. Barcha paketlar, maxsus miqdor, referral va wallet shu yerda.</p>
     </header>
 
-    <section class="panel" aria-labelledby="packages-title">
-      <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
-        <div>
-          <strong id="packages-title">Stars paketlari</strong>
-          <span>Qancha Stars kerak bo'lsa shuni tanlang.</span>
+    <div class="tabs">
+      <button class="tab active" id="tab-stars" onclick="activateTab('stars')"><strong>⭐ Stars</strong><span>Paketlar</span></button>
+      <button class="tab" id="tab-referral" onclick="activateTab('referral')"><strong>🔗 Referral</strong><span>Havola</span></button>
+      <button class="tab" id="tab-wallet" onclick="activateTab('wallet')"><strong>💰 Wallet</strong><span>Balans</span></button>
+    </div>
+
+    <section class="panel active" id="panel-stars">
+      <div class="note">Bazaviy narx: 1 Star = 200 UZS. Paketlar yoki maxsus buyurtma tanlang.</div>
+      <div class="package-grid" id="package-grid"></div>
+
+      <div class="panel" style="margin-top:18px;">
+        <strong>Maxsus miqdor</strong>
+        <div class="input-group">
+          <label for="custom-stars">Necha Stars kerak? (kamida 50)</label>
+          <input id="custom-stars" type="number" min="50" value="100" oninput="updateCustomPrice()" />
+          <div id="custom-price" class="note">100 Stars = 20,000 UZS</div>
+          <button class="button" onclick="prepareCustomPurchase()">Maxsus buyurtma</button>
         </div>
-        <button class="button secondary" onclick="showCustomSection()">Maxsus buyurtma</button>
       </div>
 
-      <div class="grid" id="package-grid"></div>
-    </section>
-
-    <section class="panel" id="custom-panel" style="display:none;">
-      <strong>Maxsus Stars buyurtma</strong>
-      <div class="input-group">
-        <label for="custom-stars">Necha Stars kerak? (kamida 50)</label>
-        <input id="custom-stars" type="number" min="50" value="100" oninput="updateCustomPrice()" />
-        <div id="custom-price" class="note">Narx: 20,000 UZS uchun 100 Stars</div>
-        <button class="button" onclick="prepareCustomPurchase()">To'lov usulini tanlash</button>
+      <div class="panel" style="margin-top:18px;">
+        <strong>Payme va Click</strong>
+        <div class="method-grid">
+          <button class="button" style="background:#1d4ed8;" onclick="openCheckout('payme')">Payme orqali to'lash</button>
+          <button class="button" style="background:#f59e0b;" onclick="openCheckout('click')">Click orqali to'lash</button>
+        </div>
       </div>
     </section>
 
-    <section class="panel" id="payment-panel" style="display:none;">
-      <strong id="payment-title">To'lov usulini tanlang</strong>
-      <div class="note" id="payment-subtitle"></div>
-      <div class="grid" id="payment-grid"></div>
+    <section class="panel" id="panel-referral">
+      <div class="note">Do'stingiz birinchi xaridni amalga oshirganda sizga +5 Stars beriladi.</div>
+      <div style="margin-top:18px;padding:18px;border-radius:20px;border:1px solid var(--border);background:var(--surface);">
+        <p style="margin:0 0 10px;font-weight:700;">Sizning referral havolangiz</p>
+        <p id="referral-link" style="margin:0;color:var(--accent);word-break:break-all;">Botga ulanib, referral kodni oling.</p>
+      </div>
     </section>
 
-    <div id="message-box" class="status" style="display:none;"></div>
+    <section class="panel" id="panel-wallet">
+      <div style="display:grid;gap:14px;">
+        <div style="padding:18px;border-radius:20px;border:1px solid var(--border);background:var(--surface);">
+          <p style="margin:0 0 8px;font-weight:700;">Wallet balansi</p>
+          <p id="wallet-balance" style="margin:0;color:var(--accent);font-size:1.1rem;">0 UZS</p>
+        </div>
+        <div style="padding:18px;border-radius:20px;border:1px solid var(--border);background:var(--surface);">
+          <p style="margin:0 0 8px;font-weight:700;">Star balansi</p>
+          <p id="star-balance" style="margin:0;color:var(--accent);font-size:1.1rem;">0 ⭐</p>
+        </div>
+        <button class="button" onclick="requestWalletTopup()">Hamyonni to'ldirish</button>
+      </div>
+      <div class="note">Bot orqali hamyon to'ldirishni so'rang, keyin Payme yoki Click bilan to‘lovni yakunlang.</div>
+    </section>
 
-    <footer>Payme va Click linklari <strong>openLink()</strong> orqali ochiladi, bu mini appning barqaror ishlashi uchun muhim.</footer>
+    <div id="status-box" class="status" style="display:none;"></div>
+    <footer>Native Telegram mini app uslubi uchun <strong>tg.expand()</strong> va <strong>tg.openLink()</strong> ishlatiladi.</footer>
   </div>
 
   <script>
     const tg = window.Telegram.WebApp;
-    const starPackages = [
+    const packages = [
       { key: 'stars_100', label: '100 Stars', price: 20000 },
       { key: 'stars_150', label: '150 Stars', price: 30000 },
       { key: 'stars_250', label: '250 Stars', price: 50000 },
@@ -241,16 +134,23 @@
       tg.expand();
       renderPackages();
       setStatus('Paketni tanlang yoki maxsus buyurtma qiling.');
+      setReferralLink();
+    }
+
+    function activateTab(tabName) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.toggle('active', tab.id === `tab-${tabName}`));
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === `panel-${tabName}`));
+      if (tabName === 'referral') setReferralLink();
     }
 
     function renderPackages() {
       const grid = document.getElementById('package-grid');
       grid.innerHTML = '';
-      starPackages.forEach(pkg => {
+      packages.forEach(pkg => {
         const card = document.createElement('button');
         card.type = 'button';
         card.className = 'card';
-        card.innerHTML = `<strong>${pkg.label}</strong><span>${pkg.price.toLocaleString('uz-UZ')} UZS</span>`;
+        card.innerHTML = `<div class="card-title">${pkg.label}</div><p class="card-text">${pkg.price.toLocaleString('uz-UZ')} UZS</p>`;
         card.onclick = () => selectPackage(pkg);
         grid.appendChild(card);
       });
@@ -270,11 +170,13 @@
     }
 
     function updateCustomPrice() {
-      const count = Number(document.getElementById('custom-stars').value) || 50;
-      const valid = Math.max(count, 50);
-      const price = valid * 200;
-      document.getElementById('custom-price').textContent = `${valid.toLocaleString('uz-UZ')} Stars - ${price.toLocaleString('uz-UZ')} UZS`;
-      selectedOrder = { product: 'stars_custom', amount: price, count: valid };
+      const input = document.getElementById('custom-stars');
+      let count = Number(input.value) || 50;
+      if (count < 50) count = 50;
+      input.value = count;
+      const price = count * 200;
+      document.getElementById('custom-price').textContent = `${count.toLocaleString('uz-UZ')} Stars - ${price.toLocaleString('uz-UZ')} UZS`;
+      selectedOrder = { product: 'stars_custom', amount: price, count };
     }
 
     function prepareCustomPurchase() {
@@ -286,7 +188,7 @@
     function showPaymentMethods(title, amount, productKey, count = null) {
       document.getElementById('custom-panel').style.display = 'none';
       document.getElementById('payment-panel').style.display = 'block';
-      document.getElementById('payment-title').textContent = `To'lov usulini tanlang`;
+      document.getElementById('payment-title').textContent = 'To\'lov usulini tanlang';
       document.getElementById('payment-subtitle').textContent = `${title} — ${amount.toLocaleString('uz-UZ')} UZS`;
 
       const grid = document.getElementById('payment-grid');
@@ -301,7 +203,7 @@
         const card = document.createElement('button');
         card.type = 'button';
         card.className = 'method';
-        card.innerHTML = `<strong>${method.label}</strong><span>${method.label === 'Hamyondan' ? 'Bot ichidagi balansdan to‘laydi' : 'Iltimos, ochilgan sahifada to‘lovni yakunlang.'}</span>`;
+        card.innerHTML = `<div class="method-title">${method.label}</div><p class="method-text">${method.label === 'Hamyondan' ? 'Bot ichidagi balansdan to‘laydi' : 'Iltimos, ochilgan sahifada to‘lovni yakunlang.'}</p>`;
         card.onclick = method.action;
         grid.appendChild(card);
       });
@@ -320,23 +222,28 @@
         setStatus('Iltimos, paketni tanlang.');
         return;
       }
-
-      const payload = {
-        action: 'purchase',
-        product: productKey,
-        method: 'wallet'
-      };
-
-      if (productKey === 'stars_custom') {
-        payload.count = count;
-      }
-
+      const payload = { action: 'purchase', product: productKey, method: 'wallet' };
+      if (productKey === 'stars_custom') payload.count = count;
       tg.sendData(JSON.stringify(payload));
       setStatus('To‘lov talabi yuborildi. Botdan javobni kuting.');
     }
 
+    function requestWalletTopup() {
+      const payload = { action: 'topup', amount: 50000, method: 'wallet' };
+      tg.HapticFeedback?.impactOccurred('medium');
+      tg.sendData(JSON.stringify(payload));
+      setStatus('Hamyonni to‘ldirish uchun botga so‘rov yuborildi. Keyingi ko‘rsatmalarga qarang.');
+    }
+
+    function setReferralLink() {
+      const username = tg.initDataUnsafe?.user?.username || 'bot';
+      const referralCode = tg.initDataUnsafe?.query_id || 'your_code_here';
+      const link = `https://t.me/${username}?start=${referralCode}`;
+      document.getElementById('referral-link').textContent = link;
+    }
+
     function setStatus(text) {
-      const box = document.getElementById('message-box');
+      const box = document.getElementById('status-box');
       box.textContent = text;
       box.style.display = 'block';
     }
