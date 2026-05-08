@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Secure Star</title>
+  <title>StarUzb</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <style>
     :root {
       color-scheme: dark;
@@ -100,7 +101,7 @@
       padding: 20px 16px 92px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
       overflow: hidden;
     }
 
@@ -154,7 +155,7 @@
       border-radius: 20px;
       backdrop-filter: blur(14px);
       box-shadow: var(--shadow);
-      padding: 18px;
+      padding: 20px;
     }
 
     .hero-card {
@@ -195,20 +196,20 @@
       flex: 1;
       overflow: hidden;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
     }
 
     .view.active { display: flex; }
     .content-scroll {
       overflow-y: auto;
       display: grid;
-      gap: 16px;
+      gap: 20px;
       padding-right: 4px;
     }
 
     .section-grid {
       display: grid;
-      gap: 12px;
+      gap: 16px;
     }
 
     .category-card,
@@ -221,8 +222,8 @@
       border: 1px solid var(--border);
       border-radius: 18px;
       backdrop-filter: blur(12px);
-      padding: 18px;
-      transition: transform 0.18s ease, border-color 0.18s ease;
+      padding: 20px;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
     }
 
@@ -232,6 +233,16 @@
     .history-card:hover,
     .invite-item:hover,
     .wallet-panel:hover { transform: translateY(-1px); border-color: rgba(79,157,255,0.35); }
+
+    .category-card:active,
+    .option-card:active,
+    .package-card:active,
+    .history-card:active,
+    .invite-item:active,
+    .wallet-panel:active {
+      transform: scale(0.92) translateY(2px);
+      filter: brightness(1.1);
+    }
 
     .category-card.active,
     .option-card.active,
@@ -265,13 +276,13 @@
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      gap: 16px;
     }
 
     .grid-2 {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 16px;
     }
 
     .badge {
@@ -290,7 +301,7 @@
 
     .field {
       display: grid;
-      gap: 10px;
+      gap: 12px;
     }
 
     .field label { color: var(--muted); font-size: 0.9rem; }
@@ -310,7 +321,7 @@
     .pill-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
     }
 
     .pill {
@@ -318,7 +329,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 10px 14px;
+      padding: 12px 16px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,0.1);
       background: rgba(255,255,255,0.04);
@@ -365,10 +376,6 @@
       backdrop-filter: blur(18px);
     }
 
-    .nav-item,
-    .category-card {
-      transition: transform 0.2s ease, filter 0.2s ease;
-    }
     .nav-item {
       border: none;
       background: transparent;
@@ -382,10 +389,10 @@
       cursor: pointer;
       transition: background 0.18s ease, color 0.18s ease;
     }
-    .nav-item:active,
-    .category-card:active {
-      transform: scale(0.92);
-      filter: brightness(1.2);
+
+    .nav-item:active {
+      transform: scale(0.92) translateY(2px);
+      filter: brightness(1.1);
     }
 
     .nav-item.active {
@@ -541,7 +548,7 @@
 
     .pill-list {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
@@ -550,7 +557,7 @@
       border-radius: 999px;
       background: rgba(255,255,255,0.04);
       color: var(--muted);
-      padding: 10px 14px;
+      padding: 12px 16px;
       cursor: pointer;
     }
 
@@ -558,7 +565,7 @@
 
     .copy-row {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
       flex-wrap: wrap;
     }
@@ -577,7 +584,7 @@
 
     .link-actions {
       display: grid;
-      gap: 10px;
+      gap: 12px;
       width: 160px;
     }
 
@@ -600,15 +607,17 @@
     </div>
   </div>
 
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
   <div class="app-shell" id="app" aria-hidden="true">
     <div class="top-bar">
       <div class="page-title">
-        <h1 data-i18n="brand">Secure Star</h1>
-        <p data-i18n="page_subtitle">Premium secure purchases for Stars, Premium and gifts</p>
+        <h1 data-i18n="brand">StarUzb</h1>
+        <p data-i18n="page_subtitle">Premium secure purchases for Stars and Premium</p>
       </div>
       <button class="profile-pill" id="profileButton" type="button">
         <img id="profileAvatar" src="" alt="Profile" />
-        <span><strong id="profileName"></strong><small>Settings</small></span>
+        <span><strong id="profileName"></strong><small data-i18n="settings">Settings</small></span>
       </button>
     </div>
 
@@ -616,49 +625,45 @@
       <div class="content-scroll" id="shopContent">
         <div class="hero-card card">
           <h2 data-i18n="hero_title">Secure digital checkout ⚡️</h2>
-          <p data-i18n="hero_subtitle">Buy Stars, Premium and secure gifts with confidence and speed.</p>
-          <button class="button" type="button" onclick="switchView('shop')" data-i18n="hero_cta">Start secure checkout</button>
+          <p data-i18n="hero_subtitle">Buy Stars and Premium with confidence and speed.</p>
+          <button type="button" onclick="switchView('shop')" data-i18n="hero_cta">Start secure checkout</button>
         </div>
 
         <div class="card section-grid" id="shopStep1">
-          <h3>What do you want?</h3>
-          <div class="grid-3">
+          <h3 data-i18n="what_do_you_want">What do you want?</h3>
+          <div class="grid-2">
             <button class="category-card" type="button" onclick="selectCategory('stars')">
-              <h3 data-i18n="category_stars_title">⚡️ Buy ⭐️ Stars</h3>
-              <p data-i18n="category_stars_desc">Secure star top-up for your channel and friends.</p>
+              <h3 data-i18n="category_stars_title">⭐ Buy Stars</h3>
+              <p data-i18n="category_stars_desc">Top up stars for yourself or friends.</p>
             </button>
             <button class="category-card" type="button" onclick="selectCategory('premium')">
-              <h3 data-i18n="category_premium_title">💎 Secure Premium</h3>
-              <p data-i18n="category_premium_desc">Premium access with protection and priority.</p>
-            </button>
-            <button class="category-card" type="button" onclick="selectCategory('gifts')">
-              <h3 data-i18n="category_gifts_title">🛡️ Digital Gifts</h3>
-              <p data-i18n="category_gifts_desc">Send secure digital gifts instantly.</p>
+              <h3 data-i18n="category_premium_title">💎 Telegram Premium</h3>
+              <p data-i18n="category_premium_desc">Premium access with savings and gifts.</p>
             </button>
           </div>
         </div>
 
         <div class="card section-grid" id="shopStep2" style="display:none;">
-          <div class="status-dot"><strong>Step 2</strong><span>Choose recipient</span></div>
+          <div class="status-dot"><strong data-i18n="step">Step</strong> 2<span data-i18n="choose_recipient">Choose recipient</span></div>
           <div class="pill-row">
-            <button class="pill active" type="button" id="recipientSelf" onclick="setRecipient('self')">For myself</button>
-            <button class="pill" type="button" id="recipientGift" onclick="setRecipient('gift')">Gift to friend</button>
+            <button class="pill active" type="button" id="recipientSelf" onclick="setRecipient('self')" data-i18n="for_myself">For myself</button>
+            <button class="pill" type="button" id="recipientGift" onclick="setRecipient('gift')" data-i18n="gift_to_friend">Gift to friend</button>
           </div>
           <div class="field" id="giftInputRow" style="display:none;">
-            <label for="giftUsername">Friend @username</label>
+            <label for="giftUsername" data-i18n="friend_username">Friend @username</label>
             <input id="giftUsername" type="text" placeholder="@friendname" maxlength="32" oninput="updateGiftUsername()" />
           </div>
-          <button class="button" id="giftContinueButton" type="button" style="display:none;" onclick="setRecipientAndContinue()">Continue</button>
+          <button class="button" id="giftContinueButton" type="button" style="display:none;" onclick="setRecipientAndContinue()" data-i18n="continue">Continue</button>
         </div>
 
         <div class="card section-grid" id="shopStep3" style="display:none;">
-          <div class="status-dot"><strong>Step 3</strong><span>Select a package</span></div>
+          <div class="status-dot"><strong data-i18n="step">Step</strong> 3<span data-i18n="select_package">Select a package</span></div>
           <div class="field" id="selectedCategoryLabel"></div>
           <div class="grid-2" id="packageGrid"></div>
           <div class="field" id="customStarsRow" style="display:none;">
-            <label for="customStars">Custom Stars amount</label>
+            <label for="customStars" data-i18n="custom_stars_amount">Custom Stars amount</label>
             <input id="customStars" type="number" min="50" placeholder="50" oninput="updateCustomAmount()" />
-            <p id="customPrice" style="color: var(--muted);">Price will update automatically.</p>
+            <p id="customPrice" style="color: var(--muted);" data-i18n="price_updates_automatically">Price will update automatically.</p>
           </div>
         </div>
       </div>
@@ -667,20 +672,20 @@
     <div class="view" id="view-referral">
       <div class="content-scroll">
         <div class="card">
-          <h3>Referral program</h3>
-          <p>Get 5 Stars for friend star purchases and 15 Stars for Premium.</p>
+          <h3 data-i18n="referral_program">Referral program</h3>
+          <p data-i18n="referral_desc">Get 5 Stars for friend star purchases and 15 Stars for Premium.</p>
         </div>
         <div class="card">
           <div class="copy-row">
             <div class="link-box" id="referralLink"></div>
             <div class="link-actions">
-              <button class="button secondary" type="button" onclick="copyReferralLink()">Copy</button>
-              <button class="button" type="button" onclick="inviteFriends()">Invite</button>
+              <button class="button secondary" type="button" onclick="copyReferralLink()" data-i18n="copy">Copy</button>
+              <button class="button" type="button" onclick="inviteFriends()" data-i18n="invite">Invite</button>
             </div>
           </div>
         </div>
         <div class="card">
-          <h3>Invited users</h3>
+          <h3 data-i18n="invited_users">Invited users</h3>
           <div id="invitedUsers" class="section-grid"></div>
         </div>
       </div>
@@ -690,24 +695,24 @@
       <div class="content-scroll">
         <div class="wallet-terminal card">
           <div class="wallet-header">
-            <span>Available balance</span>
+            <span data-i18n="available_balance">Available balance</span>
             <span>UZS</span>
           </div>
           <div class="wallet-balance" id="walletBalance">0</div>
         </div>
 
         <div class="card wallet-panel">
-          <h3>Paynet ID</h3>
-          <p>Enter this ID at any Paynet terminal.</p>
+          <h3 data-i18n="paynet_id">Paynet ID</h3>
+          <p data-i18n="paynet_desc">Enter this ID at any Paynet terminal.</p>
           <div class="wallet-id" id="paynetId"></div>
         </div>
 
         <div class="card">
           <div class="pill-list">
-            <button type="button" class="active" id="depTab" onclick="setWalletTab('deposits')">Deposit</button>
-            <button type="button" id="expTab" onclick="setWalletTab('expenses')">Expenses</button>
+            <button type="button" class="active" id="depTab" onclick="setWalletTab('deposits')" data-i18n="deposit">Deposit</button>
+            <button type="button" id="expTab" onclick="setWalletTab('expenses')" data-i18n="expenses">Expenses</button>
           </div>
-          <div id="walletList" class="section-grid" style="margin-top: 14px;"></div>
+          <div id="walletList" class="section-grid" style="margin-top: 16px;"></div>
         </div>
       </div>
     </div>
@@ -716,10 +721,9 @@
       <div class="content-scroll">
         <div class="card">
           <div class="pill-list">
-            <button type="button" class="active" id="filterAll" onclick="setHistoryFilter('all')">All</button>
-            <button type="button" id="filterStars" onclick="setHistoryFilter('stars')">⭐ Stars</button>
-            <button type="button" id="filterPremium" onclick="setHistoryFilter('premium')">💎 Premium</button>
-            <button type="button" id="filterGifts" onclick="setHistoryFilter('gifts')">🎁 Gifts</button>
+            <button type="button" class="active" id="filterAll" onclick="setHistoryFilter('all')" data-i18n="all">All</button>
+            <button type="button" id="filterStars" onclick="setHistoryFilter('stars')">⭐ <span data-i18n="stars">Stars</span></button>
+            <button type="button" id="filterPremium" onclick="setHistoryFilter('premium')">💎 <span data-i18n="premium">Premium</span></button>
           </div>
         </div>
         <div id="historyList" class="section-grid"></div>
@@ -728,28 +732,29 @@
   </div>
 
   <div class="bottom-nav" role="navigation" aria-label="Bottom navigation">
-    <button class="nav-item active" type="button" onclick="switchView('shop')">🏠<span data-i18n="nav_shop">Shop</span></button>
+    <button class="nav-item active" type="button" onclick="switchView('shop')">
+      <lottie-player src="https://lottie.host/9e5c544c-3507-448a-939e-360d84f938f3/official-star.json" background="transparent" speed="1" style="width: 24px; height: 24px;" loop autoplay></lottie-player>
+      <span data-i18n="nav_shop">Shop</span>
+    </button>
     <button class="nav-item" type="button" onclick="switchView('referral')">👥<span data-i18n="nav_referral">Referral</span></button>
     <button class="nav-item" type="button" onclick="switchView('wallet')">💰<span data-i18n="nav_wallet">Wallet</span></button>
     <button class="nav-item" type="button" onclick="switchView('history')">🕒<span data-i18n="nav_history">History</span></button>
   </div>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeSettings()"></div>
   <div class="drawer" id="settingsDrawer">
     <button class="drawer-close" type="button" onclick="closeSettings()">×</button>
     <h2 data-i18n="settings_title">Settings</h2>
     <div class="field">
-      <label for="languageSelect">Language</label>
-      <select id="languageSelect" onchange="setLanguage(this.value)">
+      <label for="languageSelect" data-i18n="language">Language</label>
+      <select id="languageSelect" onchange="changeLanguage(this.value)">
         <option value="uz">Uzbek</option>
         <option value="en">English</option>
         <option value="ru">Русский</option>
       </select>
-      <div id="languageSelectedLabel" style="color: var(--muted); margin-top: 6px;"></div>
     </div>
     <div class="field">
-      <label for="paymentSelect">Primary payment</label>
+      <label for="paymentSelect" data-i18n="primary_payment">Primary payment</label>
       <select id="paymentSelect" onchange="updateSettings()">
         <option value="payme">Payme</option>
         <option value="click">Click</option>
@@ -758,8 +763,8 @@
       </select>
     </div>
     <div class="field">
-      <button class="button secondary" type="button" onclick="openSupport('@SecureStar_support')" data-i18n="support_button">Support</button>
-      <button class="button secondary" type="button" onclick="openSupport('@Secure_Star')" data-i18n="channel_button">Channel</button>
+      <button class="button secondary" type="button" onclick="openSupport('@Staruzb_support')" data-i18n="support_button">Support</button>
+      <button class="button secondary" type="button" onclick="openSupport('@Staruzb_channel')" data-i18n="channel_button">Channel</button>
     </div>
   </div>
 
@@ -783,6 +788,143 @@
       alif: 'alifpay://transfer?receiver=YOUR_ALIF_ACCOUNT&amount=AMOUNT'
     };
 
+    const translations = {
+      uz: {
+        brand: 'StarUzb',
+        page_subtitle: 'Premium xavfsiz xaridlar uchun',
+        hero_title: 'Xavfsiz raqamli chekaut ⚡️',
+        hero_subtitle: 'Yulduzlar va Premiumni tez va ishonchli sotib oling.',
+        hero_cta: 'Xavfsiz sotib olishni boshlash',
+        what_do_you_want: 'Nima xohlaysiz?',
+        category_stars_title: '⭐ Yulduzlarni sotib olish',
+        category_stars_desc: 'O\'zingiz yoki do\'stlaringiz uchun yulduzlarni to\'ldiring.',
+        category_premium_title: '💎 Telegram Premium',
+        category_premium_desc: 'Tejash va sovg\'alar bilan premium kirish.',
+        step: 'Bosqich',
+        choose_recipient: 'Qabul qiluvchini tanlang',
+        for_myself: 'O\'zim uchun',
+        gift_to_friend: 'Do\'stimga sovg\'a',
+        friend_username: 'Do\'st @username',
+        continue: 'Davom etish',
+        select_package: 'Paketni tanlang',
+        custom_stars_amount: 'Yulduzlar miqdori',
+        price_updates_automatically: 'Narx avtomatik yangilanadi.',
+        referral_program: 'Hamkorlik dasturi',
+        referral_desc: 'Do\'st yulduz sotib olsa 5 yulduz, Premium uchun 15 yulduz oling.',
+        copy: 'Nusxalash',
+        invite: 'Taklif qilish',
+        invited_users: 'Taklif qilingan foydalanuvchilar',
+        available_balance: 'Mavjud balans',
+        paynet_id: 'Paynet ID',
+        paynet_desc: 'Bu IDni har qanday Paynet terminalida kiriting.',
+        deposit: 'Depozit',
+        expenses: 'Xarajatlar',
+        all: 'Hammasi',
+        stars: 'Yulduzlar',
+        premium: 'Premium',
+        nav_shop: 'Do\'kon',
+        nav_referral: 'Hamkorlik',
+        nav_wallet: 'Hamyon',
+        nav_history: 'Tarix',
+        settings: 'Sozlamalar',
+        settings_title: 'Sozlamalar',
+        language: 'Til',
+        primary_payment: 'Asosiy to\'lov',
+        support_button: 'Yordam',
+        channel_button: 'Kanal'
+      },
+      en: {
+        brand: 'StarUzb',
+        page_subtitle: 'Premium secure purchases for Stars and Premium',
+        hero_title: 'Secure digital checkout ⚡️',
+        hero_subtitle: 'Buy Stars and Premium with confidence and speed.',
+        hero_cta: 'Start secure checkout',
+        what_do_you_want: 'What do you want?',
+        category_stars_title: '⭐ Buy Stars',
+        category_stars_desc: 'Top up stars for yourself or friends.',
+        category_premium_title: '💎 Telegram Premium',
+        category_premium_desc: 'Premium access with savings and gifts.',
+        step: 'Step',
+        choose_recipient: 'Choose recipient',
+        for_myself: 'For myself',
+        gift_to_friend: 'Gift to friend',
+        friend_username: 'Friend @username',
+        continue: 'Continue',
+        select_package: 'Select a package',
+        custom_stars_amount: 'Custom Stars amount',
+        price_updates_automatically: 'Price will update automatically.',
+        referral_program: 'Referral program',
+        referral_desc: 'Get 5 Stars for friend star purchases and 15 Stars for Premium.',
+        copy: 'Copy',
+        invite: 'Invite',
+        invited_users: 'Invited users',
+        available_balance: 'Available balance',
+        paynet_id: 'Paynet ID',
+        paynet_desc: 'Enter this ID at any Paynet terminal.',
+        deposit: 'Deposit',
+        expenses: 'Expenses',
+        all: 'All',
+        stars: 'Stars',
+        premium: 'Premium',
+        nav_shop: 'Shop',
+        nav_referral: 'Referral',
+        nav_wallet: 'Wallet',
+        nav_history: 'History',
+        settings: 'Settings',
+        settings_title: 'Settings',
+        language: 'Language',
+        primary_payment: 'Primary payment',
+        support_button: 'Support',
+        channel_button: 'Channel'
+      },
+      ru: {
+        brand: 'StarUzb',
+        page_subtitle: 'Премиальные безопасные покупки для Stars и Premium',
+        hero_title: 'Безопасная цифровая оплата ⚡️',
+        hero_subtitle: 'Покупайте Stars и Premium быстро и надежно.',
+        hero_cta: 'Начать безопасную покупку',
+        what_do_you_want: 'Что вы хотите?',
+        category_stars_title: '⭐ Купить Stars',
+        category_stars_desc: 'Пополните звезды для себя или друзей.',
+        category_premium_title: '💎 Telegram Premium',
+        category_premium_desc: 'Премиум доступ с экономией и подарками.',
+        step: 'Шаг',
+        choose_recipient: 'Выберите получателя',
+        for_myself: 'Для себя',
+        gift_to_friend: 'Подарок другу',
+        friend_username: 'Друг @username',
+        continue: 'Продолжить',
+        select_package: 'Выберите пакет',
+        custom_stars_amount: 'Количество звезд',
+        price_updates_automatically: 'Цена обновится автоматически.',
+        referral_program: 'Реферальная программа',
+        referral_desc: 'Получите 5 звезд за покупку звезд другом и 15 звезд за Premium.',
+        copy: 'Копировать',
+        invite: 'Пригласить',
+        invited_users: 'Приглашенные пользователи',
+        available_balance: 'Доступный баланс',
+        paynet_id: 'Paynet ID',
+        paynet_desc: 'Введите этот ID в любом терминале Paynet.',
+        deposit: 'Депозит',
+        expenses: 'Расходы',
+        all: 'Все',
+        stars: 'Звезды',
+        premium: 'Премиум',
+        nav_shop: 'Магазин',
+        nav_referral: 'Рефералы',
+        nav_wallet: 'Кошелек',
+        nav_history: 'История',
+        settings: 'Настройки',
+        settings_title: 'Настройки',
+        language: 'Язык',
+        primary_payment: 'Основной платеж',
+        support_button: 'Поддержка',
+        channel_button: 'Канал'
+      }
+    };
+
+    let currentLang = 'uz';
+
     const state = {
       currentView: 'shop',
       shopStep: 1,
@@ -798,9 +940,8 @@
         { name: '@murod123', reward: '+15 ⭐' }
       ],
       history: [
-        { type: 'stars', title: '100 Stars', method: 'Payme', amount: 19999, status: 'completed', time: '07 May 2026, 01:20' },
-        { type: 'premium', title: '6 Months Premium', method: 'Click', amount: 215999, status: 'pending', time: '06 May 2026, 23:48' },
-        { type: 'gifts', title: 'Gift to @shahzod', method: 'Payme', amount: 49999, status: 'cancelled', time: '05 May 2026, 19:32' }
+        { type: 'stars', title: '100 ⭐ Stars', method: 'Payme', amount: 19999, status: 'completed', time: '07 May 2026, 01:20' },
+        { type: 'premium', title: '6 Months Premium', method: 'Click', amount: 215999, status: 'pending', time: '06 May 2026, 23:48' }
       ],
       wallet: {
         balance: 0,
@@ -813,81 +954,18 @@
       }
     };
 
-    const translations = {
-      uz: {
-        brand: 'Secure Star',
-        page_subtitle: 'Premium xavfsiz xaridlar uchun',
-        hero_title: 'Xavfsiz raqamli chekaut ⚡️',
-        hero_subtitle: 'Yulduzlar, Premium va sovg‘ilarni tez va ishonchli sotib oling.',
-        hero_cta: 'Xavfsiz sotib olishni boshlash',
-        category_stars_title: '⚡️ Yulduzlarni to‘ldirish',
-        category_stars_desc: 'Kanal va do‘stlar uchun xavfsiz to‘lov.',
-        category_premium_title: '💎 Secure Premium',
-        category_premium_desc: 'Maxsus qulaylik va ustuvor kirish.',
-        category_gifts_title: '🛡️ Raqamli sovg‘ilar',
-        category_gifts_desc: 'Instant sovg‘ilarni do‘stlaringizga yuboring.',
-        support_button: 'Yordam',
-        channel_button: 'Kanal',
-        nav_shop: 'Doʻkon',
-        nav_referral: 'Hamkorlik',
-        nav_wallet: 'Hamyon',
-        nav_history: 'Tarix',
-        settings_title: 'Sozlamalar'
-      },
-      en: {
-        brand: 'Secure Star',
-        page_subtitle: 'Premium secure purchases for Stars, Premium and gifts',
-        hero_title: 'Secure digital checkout ⚡️',
-        hero_subtitle: 'Buy Stars, Premium and secure gifts with confidence and speed.',
-        hero_cta: 'Start secure checkout',
-        category_stars_title: '⚡️ Buy ⭐️ Stars',
-        category_stars_desc: 'Secure star top-up for your channel and friends.',
-        category_premium_title: '💎 Secure Premium',
-        category_premium_desc: 'Premium access with protection and priority.',
-        category_gifts_title: '🛡️ Digital Gifts',
-        category_gifts_desc: 'Send secure digital gifts instantly.',
-        support_button: 'Support',
-        channel_button: 'Channel',
-        nav_shop: 'Shop',
-        nav_referral: 'Referral',
-        nav_wallet: 'Wallet',
-        nav_history: 'History',
-        settings_title: 'Settings'
-      },
-      ru: {
-        brand: 'Secure Star',
-        page_subtitle: 'Премиальные безопасные покупки для Stars, Premium и подарков',
-        hero_title: 'Безопасная цифровая оплата ⚡️',
-        hero_subtitle: 'Покупайте Stars, Premium и подарки быстро и надежно.',
-        hero_cta: 'Начать безопасную покупку',
-        category_stars_title: '⚡️ Купить ⭐️ Stars',
-        category_stars_desc: 'Безопасное пополнение Stars для канала и друзей.',
-        category_premium_title: '💎 Secure Premium',
-        category_premium_desc: 'Премиум с защитой и приоритетом.',
-        category_gifts_title: '🛡️ Цифровые подарки',
-        category_gifts_desc: 'Мгновенно отправляйте цифровые подарки.',
-        support_button: 'Поддержка',
-        channel_button: 'Канал',
-        nav_shop: 'Магазин',
-        nav_referral: 'Рефералы',
-        nav_wallet: 'Кошелек',
-        nav_history: 'История',
-        settings_title: 'Настройки'
-      }
-    };
-
     function init() {
-      const savedLanguage = localStorage.getItem('secureStarLanguage');
-      if (savedLanguage) state.settings.language = savedLanguage;
-      const savedPayment = localStorage.getItem('secureStarPayment');
+      const savedLang = localStorage.getItem('starUzbLanguage');
+      if (savedLang) currentLang = savedLang;
+      const savedPayment = localStorage.getItem('starUzbPayment');
       if (savedPayment) state.settings.payment = savedPayment;
       document.getElementById('profileName').textContent = user.first_name || 'Guest';
       document.getElementById('profileAvatar').src = user.photo_url || 'https://telegram.org/img/t_logo.png';
       document.getElementById('paynetId').textContent = formatPaynetId(user.id);
-      document.getElementById('referralLink').textContent = `https://t.me/secure_starbot?start=${user.id}`;
-      document.getElementById('languageSelect').value = state.settings.language;
+      document.getElementById('referralLink').textContent = `https://t.me/StarUzb_bot?start=${user.id}`;
+      document.getElementById('languageSelect').value = currentLang;
       document.getElementById('paymentSelect').value = state.settings.payment;
-      setLanguage(state.settings.language);
+      changeLanguage(currentLang);
       renderInvitedUsers();
       renderWallet();
       renderHistory();
@@ -934,7 +1012,7 @@
     }
 
     function getNavIcon(view) {
-      return { shop: '🏠', referral: '👥', wallet: '💰', history: '🕒' }[view] || '🏠';
+      return { shop: '⭐', referral: '👥', wallet: '💰', history: '🕒' }[view] || '⭐';
     }
 
     function setShopStep(step) {
@@ -972,8 +1050,8 @@
       const amount = Number.isNaN(value) ? 0 : Math.max(50, value);
       document.getElementById('customStars').value = amount;
       const price = calculateStarsPrice(amount);
-      state.selectedPackage = { label: `${amount} Stars`, price, type: 'stars', custom: true };
-      document.getElementById('customPrice').textContent = `${amount} Stars — ${formatUZS(price)}`;
+      state.selectedPackage = { label: `${amount} ⭐ Stars`, price, type: 'stars', custom: true };
+      document.getElementById('customPrice').textContent = `${amount} ⭐ Stars — ${formatUZS(price)}`;
       updateMainButton();
       haptic();
     }
@@ -983,8 +1061,6 @@
       document.getElementById('shopStep2').style.display = state.shopStep === 2 ? 'block' : 'none';
       document.getElementById('shopStep3').style.display = state.shopStep === 3 ? 'block' : 'none';
       document.getElementById('selectedCategoryLabel').textContent = state.selectedCategory ? `Selected: ${capitalize(state.selectedCategory)}` : '';
-      const giftContinue = document.getElementById('giftContinueButton');
-      giftContinue.style.display = state.recipientType === 'gift' ? 'block' : 'none';
       document.getElementById('giftInputRow').style.display = state.recipientType === 'gift' ? 'block' : 'none';
       if (state.shopStep === 3) {
         renderPackages();
@@ -1005,9 +1081,9 @@
           const price = calculateStarsPrice(count);
           const card = document.createElement('button');
           card.type = 'button';
-          card.className = `package-card${state.selectedPackage?.label === `${count} Stars` ? ' active' : ''}`;
+          card.className = `package-card${state.selectedPackage?.label === `${count} ⭐ Stars` ? ' active' : ''}`;
           card.innerHTML = `<div><h3>⭐ ${count} Stars</h3><p>${formatUZS(price)}</p></div><span class="badge">-20%</span>`;
-          card.onclick = () => selectPackage({ label: `${count} Stars`, price, type: 'stars' });
+          card.onclick = () => selectPackage({ label: `${count} ⭐ Stars`, price, type: 'stars' });
           container.appendChild(card);
         });
         document.getElementById('customStarsRow').style.display = 'block';
@@ -1018,21 +1094,6 @@
           card.className = `package-card${state.selectedPackage?.label === pkg.label ? ' active' : ''}`;
           card.innerHTML = `<div><h3>💎 ${pkg.label}</h3><p>${formatUZS(pkg.price)}</p></div><span class="badge">${pkg.badge}</span>`;
           card.onclick = () => selectPackage({ ...pkg, type: 'premium' });
-          container.appendChild(card);
-        });
-        document.getElementById('customStarsRow').style.display = 'none';
-      } else {
-        const gifts = [
-          { label: 'Golden Ribbon', price: 29999 },
-          { label: 'Gift Box', price: 49999 },
-          { label: 'Star Burst', price: 79999 }
-        ];
-        gifts.forEach(gift => {
-          const card = document.createElement('button');
-          card.type = 'button';
-          card.className = `package-card${state.selectedPackage?.label === gift.label ? ' active' : ''}`;
-          card.innerHTML = `<div><h3>🎁 ${gift.label}</h3><p>${formatUZS(gift.price)}</p></div><span class="badge">Best choice</span>`;
-          card.onclick = () => selectPackage({ ...gift, type: 'gifts' });
           container.appendChild(card);
         });
         document.getElementById('customStarsRow').style.display = 'none';
@@ -1055,7 +1116,7 @@
 
     function setHistoryFilter(filter) {
       state.historyFilter = filter;
-      document.querySelectorAll('#view-history .pill-list button').forEach(btn => btn.classList.toggle('active', btn.textContent.trim().toLowerCase().includes(filter === 'all' ? 'all' : filter)));
+      document.querySelectorAll('#view-history .pill-list button').forEach(btn => btn.classList.toggle('active', btn.textContent.trim().includes(filter === 'all' ? translations[currentLang].all : filter)));
       renderHistory();
       haptic();
     }
@@ -1097,15 +1158,15 @@
 
     function copyReferralLink() {
       const link = document.getElementById('referralLink').textContent;
-      navigator.clipboard.writeText(link).then(() => showToast('Link copied to clipboard')); 
+      navigator.clipboard.writeText(link).then(() => showToast('Link copied to clipboard'));
       haptic();
     }
 
     function inviteFriends() {
       if (tg.switchInlineQuery) {
-        tg.switchInlineQuery(`Invite to Secure Star`);
+        tg.switchInlineQuery(`Invite to StarUzb`);
       } else {
-        tg.openLink(`https://t.me/share/url?url=https://t.me/secure_starbot?start=${user.id}`);
+        tg.openLink(`https://t.me/share/url?url=https://t.me/StarUzb_bot?start=${user.id}`);
       }
       haptic();
     }
@@ -1157,7 +1218,7 @@
     function openPaymentLink(method, amount) {
       const scheme = PAYMENT_SCHEMES[method]?.replace('AMOUNT', amount) || PAYMENT_SCHEMES.payme.replace('AMOUNT', amount);
       if (scheme.includes('YOUR_')) {
-        tg.openLink('https://t.me/secure_starbot');
+        tg.openLink('https://t.me/StarUzb_bot');
         showToast('Payment scheme needs account details');
         return;
       }
@@ -1207,30 +1268,21 @@
       haptic();
     }
 
-    function setLanguage(lang) {
-      state.settings.language = lang;
-      state.selectedPayment = state.settings.payment;
-      document.getElementById('languageSelect').value = lang;
-      localStorage.setItem('secureStarLanguage', lang);
-      translatePage();
-      document.getElementById('languageSelectedLabel').textContent = `Selected: ${lang.toUpperCase()} ✅`;
-    }
-
-    function translatePage() {
-      const locale = state.settings.language;
-      const current = translations[locale] || translations.en;
+    function changeLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('starUzbLanguage', lang);
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (current[key]) el.textContent = current[key];
+        if (translations[lang][key]) el.textContent = translations[lang][key];
       });
+      tg.HapticFeedback?.notificationOccurred('success');
     }
 
     function updateSettings() {
       state.settings.language = document.getElementById('languageSelect').value;
       state.settings.payment = document.getElementById('paymentSelect').value;
       state.selectedPayment = state.settings.payment;
-      localStorage.setItem('secureStarLanguage', state.settings.language);
-      localStorage.setItem('secureStarPayment', state.settings.payment);
+      localStorage.setItem('starUzbPayment', state.settings.payment);
     }
 
     function openSupport(target) {
