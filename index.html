@@ -665,6 +665,11 @@
             <input id="customStars" type="number" min="50" placeholder="50" oninput="updateCustomAmount()" />
             <p id="customPrice" style="color: var(--muted);" data-i18n="price_updates_automatically">Price will update automatically.</p>
           </div>
+          <div class="field" id="packageSummary" style="display:none;">
+            <h3 data-i18n="selected_package">Selected Package</h3>
+            <p id="summaryDetails"></p>
+            <p id="summaryRecipient"></p>
+          </div>
         </div>
       </div>
     </div>
@@ -831,7 +836,8 @@
         language: 'Til',
         primary_payment: 'Asosiy to\'lov',
         support_button: 'Yordam',
-        channel_button: 'Kanal'
+        channel_button: 'Kanal',
+        selected_package: 'Tanlangan paket'
       },
       en: {
         brand: 'StarUzb',
@@ -875,7 +881,8 @@
         language: 'Language',
         primary_payment: 'Primary payment',
         support_button: 'Support',
-        channel_button: 'Channel'
+        channel_button: 'Channel',
+        selected_package: 'Selected Package'
       },
       ru: {
         brand: 'StarUzb',
@@ -919,7 +926,8 @@
         language: 'Язык',
         primary_payment: 'Основной платеж',
         support_button: 'Поддержка',
-        channel_button: 'Канал'
+        channel_button: 'Канал',
+        selected_package: 'Выбранный пакет'
       }
     };
 
@@ -1071,6 +1079,7 @@
         backButton.hide();
       }
       updateMainButton();
+      updatePackageSummary();
     }
 
     function renderPackages() {
@@ -1246,6 +1255,17 @@
         mainButton.enable();
       } else {
         mainButton.hide();
+      }
+    }
+
+    function updatePackageSummary() {
+      const summary = document.getElementById('packageSummary');
+      if (state.selectedPackage) {
+        summary.style.display = 'block';
+        document.getElementById('summaryDetails').textContent = `${state.selectedPackage.label} — ${formatUZS(state.selectedPackage.price)}`;
+        document.getElementById('summaryRecipient').textContent = state.recipientType === 'self' ? 'For myself' : `Gift to ${state.giftUsername || 'friend'}`;
+      } else {
+        summary.style.display = 'none';
       }
     }
 
